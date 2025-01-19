@@ -24,8 +24,10 @@ readonly _login_items
 # Without this, the hostname displayed in terminal is often incorrect
 # https://superuser.com/questions/357159/osx-terminal-showing-incorrect-hostname
 # https://apple.stackexchange.com/questions/40734/why-is-my-host-name-wrong-at-the-terminal-prompt-when-connected-to-a-public-wifi
-readonly mac_hostname="$(scutil --get HostName 2> /dev/null)"
-readonly mac_computername="$(scutil --get ComputerName 2> /dev/null)"
+mac_hostname="$(scutil --get HostName 2> /dev/null)"
+readonly mac_hostname
+mac_computername="$(scutil --get ComputerName 2> /dev/null)"
+readonly mac_computername
 if test "${mac_hostname}" != "${mac_computername}"
 then
 	sudo scutil --set HostName "${mac_computername}"

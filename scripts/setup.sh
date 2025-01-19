@@ -86,11 +86,16 @@ prompt_user_for_git_setting "global" "user.name"
 prompt_user_for_git_setting "global" "push.default"
 prompt_user_for_git_setting "global" "init.defaultBranch"
 
-print_notice_message "Local git settings:"
-prompt_user_for_git_setting "local" "user.email"
-prompt_user_for_git_setting "local" "user.name"
-prompt_user_for_git_setting "local" "push.default"
-prompt_user_for_git_setting "local" "init.defaultBranch"
+print_notice_message "Git settings for ${HOME}/dotfiles:"
+# Use a sub-shell for safer `cd`ing
+(
+	test "$(pwd)" = "${HOME}/dotfiles" || cd "${HOME}/dotfiles"
+
+	prompt_user_for_git_setting "local" "user.email"
+	prompt_user_for_git_setting "local" "user.name"
+	prompt_user_for_git_setting "local" "push.default"
+	prompt_user_for_git_setting "local" "init.defaultBranch"
+)
 
 # Newsboat
 test -d "${HOME}/.newsboat" || mkdir "${HOME}/.newsboat"
