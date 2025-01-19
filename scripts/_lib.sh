@@ -92,8 +92,9 @@ prompt_user_for_git_setting() {
 	if test "${prompt_user_for_git_setting__scope}" = "global"
 	then
 		prompt_user_for_git_setting__scoped_command="git config --global"
-	else
-		prompt_user_for_git_setting__scoped_command="git config"
+	elif test "${prompt_user_for_git_setting__scope}" = "local"
+	then
+		prompt_user_for_git_setting__scoped_command="git config --local"
 	fi
 
 	prompt_user_for_git_setting__get_command="${prompt_user_for_git_setting__scoped_command} ${prompt_user_for_git_setting__setting}"
