@@ -3,7 +3,8 @@
 ME_ARCHITECTURE="$(uname -m)"
 ME_OPERATING_SYSTEM="$(uname -s)"
 ME_HOSTNAME="$(uname -n)"
-export ME_ARCHITECTURE ME_OPERATING_SYSTEM ME_HOSTNAME
+TERM="tmux-256color"
+export ME_ARCHITECTURE ME_OPERATING_SYSTEM ME_HOSTNAME TERM
 
 if printf '%s' "${ME_HOSTNAME}" | grep -qE '^ws[[:digit:]]{4}$'
 then
