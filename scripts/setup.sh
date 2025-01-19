@@ -28,6 +28,7 @@ scripts
 shellrc
 shellrc.d
 ssh/config
+zprofile
 zshrc
 dotfiles_settings"
 

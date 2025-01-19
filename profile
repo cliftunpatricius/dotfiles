@@ -17,16 +17,18 @@ if test "$(uname -s)" = "Darwin"
 then
 	if test "$(uname -m)" = "arm64"
 	then
-		_homebrew_prefix="/opt/homebrew"
+		eval "$(/opt/homebrew/bin/brew shellenv)"
 	elif test "$(uname -m)" = "x86_64"
 	then
-		_homebrew_prefix="/usr/local"
+		eval "$(/usr/local/bin/brew shellenv)"
 	fi
-	readonly _homebrew_prefix
 
-	eval "$("${_homebrew_prefix}"/bin/brew shellenv)"
-
-	EDITOR="${HOMEBREW_PREFIX}/bin/ovi"
+	if test -x "${HOMEBREW_PREFIX}/bin/ovi"
+	then
+		EDITOR="${HOMEBREW_PREFIX}/bin/ovi"
+	else
+		EDITOR="/usr/bin/vi"
+	fi
 else
 	EDITOR="$(command -v vi 2> /dev/null)"
 fi
