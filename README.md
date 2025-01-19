@@ -13,21 +13,28 @@ My own digital ramblings about a sane CLI experience across various platforms (o
 * some portions can be customized by editting existing values in the `dotfiles_settings` file
 * `vi` mode, `vi` mode, `vi` mode
 
-Symlinks created in `"${HOME}"`:
+### Symlinks created in `"${HOME}"`:
 
 ```
-./.bash_profile       ->  /Users/USER/dotfiles/bash_profile
-./.bashrc             ->  /Users/USER/dotfiles/bashrc
-./.dotfiles_settings  ->  /Users/USER/dotfiles/dotfiles_settings
-./.inputrc            ->  /Users/USER/dotfiles/inputrc
-./.kshrc              ->  /Users/USER/dotfiles/kshrc
-./.lynxrc             ->  /Users/USER/dotfiles/lynxrc
-./.newsboat.d         ->  /Users/USER/dotfiles/newsboat.d
-./.profile            ->  /Users/USER/dotfiles/profile
-./.scripts            ->  /Users/USER/dotfiles/scripts
-./.shellrc            ->  /Users/USER/dotfiles/shellrc
-./.shellrc.d          ->  /Users/USER/dotfiles/shellrc.d
-./.zshrc              ->  /Users/USER/dotfiles/zshrc
+${HOME}/.bash_profile       ->  ${HOME}/dotfiles/bash_profile
+${HOME}/.bashrc             ->  ${HOME}/dotfiles/bashrc
+${HOME}/.dotfiles_settings  ->  ${HOME}/dotfiles/dotfiles_settings
+${HOME}/.inputrc            ->  ${HOME}/dotfiles/inputrc
+${HOME}/.kshrc              ->  ${HOME}/dotfiles/kshrc
+${HOME}/.lynxrc             ->  ${HOME}/dotfiles/lynxrc
+${HOME}/.newsboat.d         ->  ${HOME}/dotfiles/newsboat.d
+${HOME}/.profile            ->  ${HOME}/dotfiles/profile
+${HOME}/.scripts            ->  ${HOME}/dotfiles/scripts
+${HOME}/.shellrc            ->  ${HOME}/dotfiles/shellrc
+${HOME}/.shellrc.d          ->  ${HOME}/dotfiles/shellrc.d
+${HOME}/.zprofile           ->  ${HOME}/dotfiles/zprofile
+${HOME}/.zshrc              ->  ${HOME}/dotfiles/zshrc
+```
+
+One can execute the following before and after the [usage](#usage) steps to compare:
+
+```sh
+find "${HOME}" -maxdepth 1 -type l -exec ls -l {} \; | awk '{print $9 " " $10 " " $11}' | sed 's|'"${HOME}"'|${HOME}|g' | sort | column -t
 ```
 
 ## Usage
