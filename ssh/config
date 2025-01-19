@@ -4,12 +4,15 @@ IgnoreUnknown UseKeychain
 # Include whatever else we may have (i.e., configuration too sensitive for a public repo)
 Include config.d/*
 
-#------------
-# Global
-#------------
+#
+# github.com
+#
+
+Host github.com
+	User git
 
 #
-# Default
+# Global Defaults
 #
 
 Host *

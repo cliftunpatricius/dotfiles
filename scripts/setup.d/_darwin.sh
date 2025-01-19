@@ -24,9 +24,12 @@ readonly _login_items
 # Without this, the hostname displayed in terminal is often incorrect
 # https://superuser.com/questions/357159/osx-terminal-showing-incorrect-hostname
 # https://apple.stackexchange.com/questions/40734/why-is-my-host-name-wrong-at-the-terminal-prompt-when-connected-to-a-public-wifi
-if test "$(scutil --get HostName)" != "$(scutil --get ComputerName)"
+readonly mac_hostname="$(scutil --get HostName 2> /dev/null)"
+readonly mac_computername="$(scutil --get ComputerName 2> /dev/null)"
+if test "${mac_hostname}" != "${mac_computername}"
 then
-	sudo scutil --set HostName "$(scutil --get ComputerName)"
+	sudo scutil --set HostName "${mac_computername}"
+	print_notice_message "macOS \`HostName\` set to ${mac_computername}"
 fi
 
 if ! test -f ~/Library/LaunchAgents/com.ldaws.CapslockEscape.plist
@@ -212,7 +215,8 @@ defaultbrowser firefox > /dev/null
 # Take care of those eyes
 if test "$(nightlight schedule)" != "sunset to sunrise"
 then
-	nightlight schedule start
+	# Do not exit upon a failure with this
+	nightlight schedule start || :
 fi
 
 # Remove undesired Login Items

@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # shellcheck disable=SC2139
-alias vi="${HOMEBREW_PREFIX}/bin/ovi"
+alias vi="${EDITOR}"
 
 # shellcheck disable=SC2139
-alias view="${HOMEBREW_PREFIX}/bin/oview"
+alias view="${EDITOR}ew"
 
 # shellcheck disable=SC2139
-alias ex="${HOMEBREW_PREFIX}/bin/oex"
+alias ex="${EDITOR%vi}ex"
 
 if test "${ME_CONTEXT}" = "work"
 then

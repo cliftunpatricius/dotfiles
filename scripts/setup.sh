@@ -93,8 +93,9 @@ prompt_user_for_git_setting "local" "push.default"
 prompt_user_for_git_setting "local" "init.defaultBranch"
 
 # Newsboat
-readonly newsboat_files="config urls"
+test -d "${HOME}/.newsboat" || mkdir "${HOME}/.newsboat"
 
+readonly newsboat_files="config urls"
 for f in ${newsboat_files}
 do
 	newsboat_path="${HOME}/.newsboat/${f}"
@@ -174,31 +175,28 @@ then
 	test -d "${HOME}/code" || mkdir "${HOME}/code"
 	test -f "${HOME}/code/.my_repos" || touch "${HOME}/code/.my_repos"
 
-	if test -f "${HOME}/.ssh/git_id_ed25519"
-	then
-		while read -r url
-		do
-			repo_org="$(printf '%s' "${url}" | awk -F ';' '{print $1;}' | awk -F ':' '{print $2;}' | awk -F '/' '{print $1;}')"
-			repo_name="$(printf '%s' "${url}" | awk -F ';' '{print $1;}' | awk -F '/' '{print $2;}' | sed 's/\.git$//')"
-			upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
+	while read -r url
+	do
+		repo_org="$(printf '%s' "${url}" | awk -F ';' '{print $1;}' | awk -F ':' '{print $2;}' | awk -F '/' '{print $1;}')"
+		repo_name="$(printf '%s' "${url}" | awk -F ';' '{print $1;}' | awk -F '/' '{print $2;}' | sed 's/\.git$//')"
+		upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
 
-			test -d "${HOME}/code/${repo_org}" || mkdir "${HOME}/code/${repo_org}"
+		test -d "${HOME}/code/${repo_org}" || mkdir "${HOME}/code/${repo_org}"
 
-			if ! test -d "${HOME}/code/${repo_org}/${repo_name}"
-			then
-				git -C "${HOME}/code/${repo_org}" clone "${url}"
-			else
-				printf '%s: %s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already cloned to ${HOME}/code/${repo_org}/${repo_name}"
-			fi
+		if ! test -d "${HOME}/code/${repo_org}/${repo_name}"
+		then
+			git -C "${HOME}/code/${repo_org}" clone "${url}"
+		else
+			printf '%s: %s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already cloned to ${HOME}/code/${repo_org}/${repo_name}"
+		fi
 
-			if test -z "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
-			then
-				git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
-			else
-				printf '%s: %s:\n%s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already has upstream set to" "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
-			fi
-		done < "${HOME}/code/.my_repos"
-	fi
+		if test -z "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+		then
+			git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
+		else
+			printf '%s: %s:\n%s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already has upstream set to" "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+		fi
+	done < "${HOME}/code/.my_repos"
 else
 	test -d "${HOME}/code/me" || mkdir "${HOME}/code/me"
 	test -f "${HOME}/code/me/.my_repos" || touch "${HOME}/code/me/.my_repos"
