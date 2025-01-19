@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# shellcheck disable=SC2139
+alias vi="${HOMEBREW_PREFIX}/bin/ovi"
+
+# shellcheck disable=SC2139
+alias view="${HOMEBREW_PREFIX}/bin/oview"
+
+# shellcheck disable=SC2139
+alias ex="${HOMEBREW_PREFIX}/bin/oex"
+
+if test "${ME_CONTEXT}" = "work"
+then
+	# Tailscale might be installed either by Homebrew or by the AppStore
+	test -f /Applications/Tailscale.app/Contents/MacOS/Tailscale && alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+fi
+

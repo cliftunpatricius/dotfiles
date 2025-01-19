@@ -1,0 +1,4 @@
+#!/bin/sh
+
+. "${HOME}"/.shellrc
+

@@ -1,0 +1,24 @@
+# Ignore these directives IF the running version of OpenSSH does not recognize them
+IgnoreUnknown UseKeychain
+
+# Include whatever else we may have (i.e., configuration too sensitive for a public repo)
+Include config.d/*
+
+#------------
+# Global
+#------------
+
+#
+# Default
+#
+
+Host *
+	# Only keys specified by the IdentityFile directives may be offered to
+	# the remote server, regardless of what keys are loaded into the agent.
+	# Remove if necessary.
+	IdentitiesOnly yes
+	# Mileage may vary. Remove if necessary.
+	AddKeysToAgent yes
+	# Needs a keychain application. Most easily implemented on macOS. Not recognized by some versions. Remove if necessary.
+	UseKeychain yes
+
