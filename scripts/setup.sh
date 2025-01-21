@@ -199,15 +199,19 @@ _shell=""
 
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
+	readonly _required_os="OpenBSD"
 	. "${HOME}/.scripts/setup.d/_openbsd.sh"
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
+	readonly _required_os="FreeBSD"
 	. "${HOME}/.scripts/setup.d/_freebsd.sh"
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
+	readonly _required_os="Linux"
 	. "${HOME}/.scripts/setup.d/_linux.sh"
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
+	readonly _required_os="Darwin"
 	. "${HOME}/.scripts/setup.d/_darwin.sh"
 fi
 
