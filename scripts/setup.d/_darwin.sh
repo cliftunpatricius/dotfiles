@@ -93,6 +93,7 @@ brew_formulae="bash dash oksh tcsh zsh
 	shellcheck
 	tmux
 	tree
+	vegeta
 	xclip
 	yq"
 
