@@ -263,5 +263,5 @@ do
 done
 unset IFS
 
-print_notice_message "May need to manually configure: lock screen immediately after display is off, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
+print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to 'ABC - Extended', trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
 
