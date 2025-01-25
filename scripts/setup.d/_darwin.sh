@@ -105,7 +105,7 @@ if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
 then
 	brew_formulae="${brew_formulae}
 		unbound"
-if test "${ME_CONTEXT}" = "work"
+elif test "${ME_CONTEXT}" = "work"
 then
 	brew tap hashicorp/tap
 
@@ -264,5 +264,13 @@ do
 done
 unset IFS
 
-print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to 'ABC - Extended', trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
+#
+# DNS Server Configuration (unbound)
+#
+
+#if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
+#then
+#fi
+
+print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to ABC - Extended, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
 
