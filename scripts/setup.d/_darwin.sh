@@ -80,6 +80,7 @@ brew_formulae="bash dash oksh tcsh zsh
 	dos2unix
 	gh
 	glow
+	gopass
 	gpg2
 	jq
 	libressl
