@@ -210,6 +210,7 @@ else
 		mas install "${tailscale_app_id}"
 	else
 		# Keep it up-to-date
+		# As it is right now, this will actually upgrade _all_ AppStore packages
 		mas upgrade
 	fi
 fi
