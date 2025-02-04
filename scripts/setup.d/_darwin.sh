@@ -4,7 +4,18 @@ set -e
 
 exit_upon_os_mismatch "${_required_os}"
 
+#
+# Source Libraries
+#
+
+. "${HOME}/.scripts/_darwin.sh"
+
+#
+# Main
+#
+
 readonly _homebrew_tailscale="false"
+readonly _unbound_user_and_group_id="499"
 
 # fdesetup
 if test "${ME_CONTEXT}" != "work" -a "$(fdesetup status)" = "FileVault is Off." -a "${__disk_encrypt_prompt__}" = "true"
@@ -269,9 +280,14 @@ unset IFS
 # DNS Server Configuration (unbound)
 #
 
-#if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
-#then
-#fi
+if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
+then
+	create_darwin_system_user "_unbound" "${_unbound_user_and_group_id}"
+
+	./"${HOME}"/.scripts/setup.d/unbound.sh
+
+	brew services start unbound
+fi
 
 print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to ABC - Extended, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
 
