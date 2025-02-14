@@ -181,19 +181,26 @@ download_hosts() {
 
 	test -z "${_hosts}" -o -z "${_url}" && return 1
 
-	_ftp_output="$(ftp -MV -w 5 -T -o "${_hosts}" "${_url}" 2>&1; printf '|%s' "${?}")"
+	#_ftp_output="$(ftp -MV -w 5 -T -o "${_hosts}" "${_url}" 2>&1; printf '|%s' "${?}")"
 
-	if printf '%s' "${_ftp_output}" | grep -q 'File is not modified on the server'
+	if test -f "${_hosts}"
 	then
-		printf 'No updates for %s\n' "${_hosts}" >&2
-		logger "${0}: no updates for ${_hosts}."
-		return 2
-	elif test "$(printf '%s' "${_ftp_output}" | awk -F '|' '{ print $NF }')" -ne "0"
-	then
-		printf 'Failed to download %s\n' "${_url}" >&2
-		logger "${0}: failed to download ${_url}."
-		return 1
+		curl -z -o "${_hosts}" "${_url}" > /dev/null 2> /dev/null || return 1
+	else
+		curl -o "${_hosts}" "${_url}" > /dev/null 2> /dev/null || return 1
 	fi
+
+	#if printf '%s' "${_ftp_output}" | grep -q 'File is not modified on the server'
+	#then
+	#	printf 'No updates for %s\n' "${_hosts}" >&2
+	#	logger "${0}: no updates for ${_hosts}."
+	#	return 2
+	#elif test "$(printf '%s' "${_ftp_output}" | awk -F '|' '{ print $NF }')" -ne "0"
+	#then
+	#	printf 'Failed to download %s\n' "${_url}" >&2
+	#	logger "${0}: failed to download ${_url}."
+	#	return 1
+	#fi
 }
 
 initialize_download_file() {

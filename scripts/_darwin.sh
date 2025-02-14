@@ -31,15 +31,15 @@ create_darwin_system_user() {
 		return 2
 	fi
 
-	echo sudo dscl . -create /Groups/"${create_new_system_user__username}"
-	echo sudo dscl . -create /Groups/"${create_new_system_user__username}" PrimaryGroupID "${create_new_system_user__id}"
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}"
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}" RecordName "${create_new_system_user__username}" "$(printf '%s' "${create_new_system_user__username}" | sed 's/^_//')"
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}" RealName "Unbound DNS server"
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}" UniqueID "${create_new_system_user__id}"
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}" PrimaryGroupID "${create_new_system_user__id}"
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}" UserShell /usr/bin/false
-	echo sudo dscl . -create /Users/"${create_new_system_user__username}" Password '*'
-	echo sudo dscl . -create /Groups/"${create_new_system_user__username}" GroupMembership "${create_new_system_user__username}"
+	sudo dscl . -create /Groups/"${create_new_system_user__username}"
+	sudo dscl . -create /Groups/"${create_new_system_user__username}" PrimaryGroupID "${create_new_system_user__id}"
+	sudo dscl . -create /Users/"${create_new_system_user__username}"
+	sudo dscl . -create /Users/"${create_new_system_user__username}" RecordName "${create_new_system_user__username}" "$(printf '%s' "${create_new_system_user__username}" | sed 's/^_//')"
+	sudo dscl . -create /Users/"${create_new_system_user__username}" RealName "Unbound DNS server"
+	sudo dscl . -create /Users/"${create_new_system_user__username}" UniqueID "${create_new_system_user__id}"
+	sudo dscl . -create /Users/"${create_new_system_user__username}" PrimaryGroupID "${create_new_system_user__id}"
+	sudo dscl . -create /Users/"${create_new_system_user__username}" UserShell /usr/bin/false
+	sudo dscl . -create /Users/"${create_new_system_user__username}" Password '*'
+	sudo dscl . -create /Groups/"${create_new_system_user__username}" GroupMembership "${create_new_system_user__username}"
 }
 

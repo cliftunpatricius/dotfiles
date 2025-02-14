@@ -28,6 +28,7 @@ scripts
 shellrc
 shellrc.d
 ssh/config
+unbound.d
 zprofile
 zshrc
 dotfiles_settings"

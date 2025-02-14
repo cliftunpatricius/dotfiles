@@ -282,9 +282,9 @@ unset IFS
 
 if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
 then
-	create_darwin_system_user "_unbound" "${_unbound_user_and_group_id}"
+	create_darwin_system_user "_unbound" "${_unbound_user_and_group_id}" || if test "${?}" != "2"; then exit 1; fi
 
-	. /"${HOME}"/.scripts/setup.d/unbound.d/_setup.sh
+	. /"${HOME}"/.scripts/setup.d/unbound.d/setup.sh
 fi
 
 print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to ABC - Extended, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
