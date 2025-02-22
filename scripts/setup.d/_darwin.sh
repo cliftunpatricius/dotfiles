@@ -102,6 +102,7 @@ brew_formulae="bash dash oksh tcsh zsh
 	nmap
 	openssh
 	openvi
+	pdsh
 	shellcheck
 	tmux
 	tree
@@ -166,7 +167,8 @@ then
 		powershell
 		puppetlabs/puppet/puppet-agent
 		slack
-		windows-app"
+		windows-app
+		zoom"
 fi
 readonly brew_casks
 
