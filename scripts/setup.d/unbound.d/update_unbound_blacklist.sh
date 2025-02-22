@@ -80,9 +80,14 @@ social_networks
 stalkerware
 warez"
 
-temp_normalized_conf="$(mktemp)" && readonly temp_normalized_conf
-temp_final_conf="$(mktemp)" && readonly temp_final_conf
-temp_download_dir="${1:-$(mktemp -d)}" && readonly temp_download_dir
+temp_normalized_conf="$(mktemp)"
+readonly temp_normalized_conf
+
+temp_final_conf="$(mktemp)"
+readonly temp_final_conf
+
+temp_download_dir="${1:-$(mktemp -d)}"
+readonly temp_download_dir
 
 readonly blacklist_conf="/var/unbound/etc/blacklist.conf"
 readonly cache_dir="/var/unbound_blacklist_cache"
@@ -175,20 +180,13 @@ normalize_ut1() {
 
 download_hosts() {
 	_hosts="${1}"
-	shift
-	_url="${1}"
-	shift
+	_url="${2}"
 
 	test -z "${_hosts}" -o -z "${_url}" && return 1
 
 	#_ftp_output="$(ftp -MV -w 5 -T -o "${_hosts}" "${_url}" 2>&1; printf '|%s' "${?}")"
 
-	if test -f "${_hosts}"
-	then
-		curl -z -o "${_hosts}" "${_url}" > /dev/null 2> /dev/null || return 1
-	else
-		curl -o "${_hosts}" "${_url}" > /dev/null 2> /dev/null || return 1
-	fi
+	curl -z "${_hosts}" -o "${_hosts}" "${_url}" > /dev/null 2> /dev/null || return 1
 
 	#if printf '%s' "${_ftp_output}" | grep -q 'File is not modified on the server'
 	#then
@@ -312,14 +310,14 @@ then
 	printf 'Initialized blacklist conf before saving new blacklist: %s\n' "${blacklist_conf}" >&2
 fi
 
-temp_final_conf_cksum="$(cksum -q "${temp_final_conf}")" || {
+temp_final_conf_cksum="$(cksum "${temp_final_conf}" > /dev/null 2> /dev/null)" || {
 	printf 'Checksum error on the new blacklist; discarding\n' >&2
 	logger "${0}: checksum error on the new blacklist; discarding."
 	exit 1
 }
 readonly temp_final_conf_cksum
 
-blacklist_conf_cksum="$(cksum -q "${blacklist_conf}")" || {
+blacklist_conf_cksum="$(cksum "${blacklist_conf}" > /dev/null 2> /dev/null)" || {
 	printf 'Checksum error on the current blacklist\n' >&2
 	logger "${0}: checksum error on the current blacklist."
 	exit 1
@@ -330,13 +328,13 @@ if test "${temp_final_conf_cksum}" != "${blacklist_conf_cksum}"
 then
 	cp "${temp_final_conf}" "${blacklist_conf}"
 	printf 'Overwrote the current blacklist with the new blacklist\n' >&2
-	logger "${0}: overwrote the current blacklist with the new blacklist."
+	#logger "${0}: overwrote the current blacklist with the new blacklist."
 	unbound-checkconf > /dev/null
 	printf 'unbound-checkconf validated with the new blacklist\n' >&2
-	logger "${0}: unbound-checkconf validated with the new blacklist."
-	unbound-control reload > /dev/null
+	#logger "${0}: unbound-checkconf validated with the new blacklist."
+	#unbound-control reload > /dev/null
 	printf 'unbound successfully reloaded\n' >&2
-	logger "${0}: unbound successfully reloaded."
+	#logger "${0}: unbound successfully reloaded."
 	exit 0
 else
 	printf 'No updates for %s\n' "${blacklist_conf}" >&2

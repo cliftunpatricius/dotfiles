@@ -12,13 +12,20 @@ readonly _unbound_blacklist_conf="${_unbound_config_dir}/blacklist.conf"
 # Subroutines
 #
 
-unbound_ensure_macos_directories_and_symlinks() {
+unbound_ensure_directories_and_or_symlinks() {
 	if test "${ME_OPERATING_SYSTEM}" = "Darwin"
 	then
 		test -d /var/unbound_blacklist_cache || sudo mkdir -p /var/unbound_blacklist_cache
 		test -d /var/unbound || sudo mkdir -p /var/unbound
 		test -L /var/unbound/etc || sudo ln -s /usr/local/etc/unbound /var/unbound/etc
 		test -L /var/unbound/db || sudo ln -s /usr/local/etc/unbound /var/unbound/db
+	fi
+}
+
+unbound_generate_dnssec_certs() {
+	if ! test -f "${_unbound_config_dir}/unbound_server.key"
+	then
+		sudo unbound-control-setup "${_unbound_config_dir}"
 	fi
 }
 
