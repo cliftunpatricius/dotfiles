@@ -12,13 +12,18 @@ readonly _unbound_blacklist_conf="${_unbound_config_dir}/blacklist.conf"
 # Subroutines
 #
 
-unbound_ensure_directories_and_or_symlinks() {
+unbound_ensure_files() {
 	if test "${ME_OPERATING_SYSTEM}" = "Darwin"
 	then
 		test -d /var/unbound_blacklist_cache || sudo mkdir -p /var/unbound_blacklist_cache
 		test -d /var/unbound || sudo mkdir -p /var/unbound
 		test -L /var/unbound/etc || sudo ln -s /usr/local/etc/unbound /var/unbound/etc
 		test -L /var/unbound/db || sudo ln -s /usr/local/etc/unbound /var/unbound/db
+	fi
+
+	if test "$(cksum /usr/local/sbin/update_unbound_blacklist.sh | awk '{print $1}')" != "$(cksum "${HOME}"/dotfiles/scripts/setup.d/unbound.d/update_unbound_blacklist.sh | awk '{print $1}')"
+	then
+		sudo cp -av "${HOME}"/dotfiles/scripts/setup.d/unbound.d/update_unbound_blacklist.sh /usr/local/sbin/update_unbound_blacklist.sh
 	fi
 }
 
@@ -32,7 +37,7 @@ unbound_generate_dnssec_certs() {
 unbound_enable_service() {
 	if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 	then
-		rcctl
+		:
 	elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 	then
 		sudo chown -R _unbound:staff /usr/local/etc/unbound
@@ -44,15 +49,20 @@ unbound_enable_service() {
 	<dict>
 		<key>Label</key>
 		<string>net.unbound</string>
+
 		<key>ProgramArguments</key>
 		<array>
+			<string>caffeinate</string>
+			<string>-s</string>
 			<string>/usr/local/sbin/unbound</string>
 			<string>-d</string>
 			<string>-c</string>
 			<string>/usr/local/etc/unbound/unbound.conf</string>
 		</array>
+
 		<key>KeepAlive</key>
 		<true/>
+
 		<key>RunAtLoad</key>
 		<true/>
 	</dict>
@@ -60,6 +70,44 @@ unbound_enable_service() {
 
 		#sudo launchctl bootstrap system /Library/LaunchDaemons/net.unbound.plist
 		sudo launchctl enable system/net.unbound
+	fi
+}
+
+unbound_enable_blacklist_updater() {
+	if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
+	then
+		:
+	elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
+	then
+		echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>net.unbound.blacklist.updater</string>
+
+		<key>ProgramArguments</key>
+		<array>
+			<string>caffeinate</string>
+			<string>-s</string>
+			<string>/usr/local/sbin/update_unbound_blacklist.sh</string>
+		</array>
+
+		<key>RunAtLoad</key>
+		<true/>
+
+		<key>StartInterval</key>
+		<integer>21600</integer>
+
+		<key>StandardErrorPath</key>
+		<string>/var/log/system.log</string>
+
+		<key>StandardOutPath</key>
+		<string>/var/log/system.log</string>
+	</dict>
+</plist>' | sudo tee /Library/LaunchDaemons/net.unbound.blacklist.updater > /dev/null
+
+		sudo launchctl enable system/net.unbound.blacklist.updater
 	fi
 }
 
