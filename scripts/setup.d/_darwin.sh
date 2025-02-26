@@ -175,6 +175,67 @@ readonly brew_casks
 # shellcheck disable=SC2086
 brew install --cask ${brew_casks}
 
+# If this is being used as a server of any kind, enable the SSH service
+if test "${ME_CONTEXT}" = "personal" \
+	&& (
+		test "${_is_dns_server}" = "true" \
+		-o "${_is_file_server}" = "true" \
+		-o "${_is_media_server}" = "true" \
+		-o "${_is_router}" = "true"
+	)
+then
+	# Configure OpenSSH service
+	sshd_config_cksum_before="$(cksum /usr/local/etc/ssh/sshd_config | awk '{print $1}')"
+	sudo sed -i -E \
+		-e 's/^#PermitRootLogin prohibit-password$/PermitRootLogin no/' \
+		-e 's/^#PubkeyAuthentication yes$/PubkeyAuthentication yes/' \
+		-e 's/^#PasswordAuthentication yes$/PasswordAuthentication no/' \
+		-e 's/^#PermitEmptyPasswords no$/PermitEmptyPasswords no/' \
+		/usr/local/etc/ssh/sshd_config 
+	sshd_config_cksum_after="$(cksum /usr/local/etc/ssh/sshd_config | awk '{print $1}')"
+
+	# Enable OpenSSH service
+	sshd_plist_cksum_before="$(cksum /Library/LaunchDaemons/net.sshd.plist | awk '{print $1}')"
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>net.sshd</string>
+
+		<key>ProgramArguments</key>
+		<array>
+			<string>caffeinate</string>
+			<string>-s</string>
+			<string>/usr/local/sbin/sshd</string>
+		</array>
+
+		<key>KeepAlive</key>
+		<true/>
+
+		<key>RunAtLoad</key>
+		<true/>
+	</dict>
+</plist>' | sudo tee /Library/LaunchDaemons/net.sshd.plist > /dev/null
+	sshd_plist_cksum_after="$(cksum /Library/LaunchDaemons/net.sshd.plist | awk '{print $1}')"
+
+	# Likely will get an error if the plits file does not yet exist.
+	if test "${sshd_plist_cksum_before}" != "${sshd_plist_cksum_after}"
+	then
+		sudo launchctl bootout system /Library/LaunchDaemons/net.sshd.plist
+		sudo launchctl disable system/net.sshd
+		sudo launchctl bootstrap system /Library/LaunchDaemons/net.sshd.plist
+		sudo launchctl enable system/net.sshd
+	fi
+
+	if test "${sshd_config_cksum_before}" != "${sshd_config_cksum_after}" -o "${sshd_plist_cksum_before}" != "${sshd_plist_cksum_after}"
+	then
+		sudo launchctl kickstart -kp system/net.sshd
+	else
+		sudo launchctl kickstart -p system/net.sshd
+	fi
+fi
+
 if test "${ME_CONTEXT}" = "work"
 then
 # As of right now, Tailscale is the _only_ app I have to use from the AppStore. My goal is to use _zero_ apps from the AppStore.

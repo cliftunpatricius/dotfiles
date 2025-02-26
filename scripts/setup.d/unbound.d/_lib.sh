@@ -68,7 +68,7 @@ unbound_enable_service() {
 	</dict>
 </plist>' | sudo tee /Library/LaunchDaemons/net.unbound.plist > /dev/null
 
-		#sudo launchctl bootstrap system /Library/LaunchDaemons/net.unbound.plist
+		# May want to include logic similar to how sshd is handled
 		sudo launchctl enable system/net.unbound
 	fi
 }
@@ -107,7 +107,10 @@ unbound_enable_blacklist_updater() {
 	</dict>
 </plist>' | sudo tee /Library/LaunchDaemons/net.unbound.blacklist.updater > /dev/null
 
+		# May want to include logic similar to how sshd is handled
+		#sudo launchctl bootstrap system /Library/LaunchDaemons/net.unbound.blacklist.updater
 		sudo launchctl enable system/net.unbound.blacklist.updater
+		#sudo launchctl kickstart -kp system/net.unbound.blacklist.updater
 	fi
 }
 
