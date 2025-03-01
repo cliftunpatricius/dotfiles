@@ -2,7 +2,20 @@
 
 set -e
 
+exit_upon_os_mismatch "${_required_os}"
+
+#
+# Source Libraries
+#
+
+. "${HOME}/.scripts/_darwin.sh"
+
+#
+# Main
+#
+
 readonly _homebrew_tailscale="false"
+readonly _unbound_user_and_group_id="499"
 
 # fdesetup
 if test "${ME_CONTEXT}" != "work" -a "$(fdesetup status)" = "FileVault is Off." -a "${__disk_encrypt_prompt__}" = "true"
@@ -13,10 +26,10 @@ then
 	test "${disk_encrypt_response}" = "yes" && sudo fdesetup enable -verbose
 fi
 
-_login_items="Firefox,Terminal"
+_login_items="Terminal"
 if test "${ME_CONTEXT}" = "work"
 then
-	_login_items="Keeper Password Manager,Mail,Google Drive,Slack,${_login_items}"
+	_login_items="Keeper Password Manager,Mail,Google Drive,Slack,Firefox,${_login_items}"
 	test "${_homebrew_tailscale}" = "false" && _login_items="Tailscale,${_login_items}"
 fi
 readonly _login_items
@@ -78,6 +91,7 @@ brew_formulae="bash dash oksh tcsh zsh
 	dos2unix
 	gh
 	glow
+	gopass
 	gpg2
 	jq
 	libressl
@@ -88,13 +102,23 @@ brew_formulae="bash dash oksh tcsh zsh
 	nmap
 	openssh
 	openvi
+	pdsh
 	shellcheck
 	tmux
 	tree
+	vegeta
 	xclip
 	yq"
 
-if test "${ME_CONTEXT}" = "work"
+# Current thinking about "reversing" specific use-case configurations (e.g., DNS server):
+#  1. Check for an aspect that gets installed/configured
+#  2. If detected, prompt user if the entire specific use-case should now be removed
+#  3. Proceed accordingly
+if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
+then
+	brew_formulae="${brew_formulae}
+		unbound"
+elif test "${ME_CONTEXT}" = "work"
 then
 	brew tap hashicorp/tap
 
@@ -125,10 +149,13 @@ readonly _shell="${HOMEBREW_PREFIX}/bin/oksh"
 # Install GUI packages.
 brew_casks="firefox
 	font-spleen
-	powershell
 	utm"
 
-if test "${ME_CONTEXT}" = "work"
+if test "${ME_CONTEXT}" = "personal"
+then
+	brew_casks="${brew_casks}
+		proton-pass"
+elif test "${ME_CONTEXT}" = "work"
 then
 	brew_casks="${brew_casks}
 		docker
@@ -137,14 +164,76 @@ then
 		google-cloud-sdk
 		google-drive
 		keeper-password-manager
+		powershell
 		puppetlabs/puppet/puppet-agent
 		slack
-		windows-app"
+		windows-app
+		zoom"
 fi
 readonly brew_casks
 
 # shellcheck disable=SC2086
 brew install --cask ${brew_casks}
+
+# If this is being used as a server of any kind, enable the SSH service
+if test "${ME_CONTEXT}" = "personal" \
+	&& (
+		test "${_is_dns_server}" = "true" \
+		-o "${_is_file_server}" = "true" \
+		-o "${_is_media_server}" = "true" \
+		-o "${_is_router}" = "true"
+	)
+then
+	# Configure OpenSSH service
+	sshd_config_cksum_before="$(cksum /usr/local/etc/ssh/sshd_config | awk '{print $1}')"
+	sudo sed -i -E \
+		-e 's/^#PermitRootLogin prohibit-password$/PermitRootLogin no/' \
+		-e 's/^#PubkeyAuthentication yes$/PubkeyAuthentication yes/' \
+		-e 's/^#PasswordAuthentication yes$/PasswordAuthentication no/' \
+		-e 's/^#PermitEmptyPasswords no$/PermitEmptyPasswords no/' \
+		/usr/local/etc/ssh/sshd_config 
+	sshd_config_cksum_after="$(cksum /usr/local/etc/ssh/sshd_config | awk '{print $1}')"
+
+	# Enable OpenSSH service
+	sshd_plist_cksum_before="$(cksum /Library/LaunchDaemons/net.sshd.plist | awk '{print $1}')"
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>net.sshd</string>
+
+		<key>ProgramArguments</key>
+		<array>
+			<string>caffeinate</string>
+			<string>-s</string>
+			<string>/usr/local/sbin/sshd</string>
+		</array>
+
+		<key>KeepAlive</key>
+		<true/>
+
+		<key>RunAtLoad</key>
+		<true/>
+	</dict>
+</plist>' | sudo tee /Library/LaunchDaemons/net.sshd.plist > /dev/null
+	sshd_plist_cksum_after="$(cksum /Library/LaunchDaemons/net.sshd.plist | awk '{print $1}')"
+
+	if test "${sshd_plist_cksum_after}" != "${sshd_plist_cksum_before}"
+	then
+		#sudo launchctl bootout system /Library/LaunchDaemons/net.sshd.plist #|| : # I do not yet understand why this fails sometimes
+		#sudo launchctl disable system/net.sshd
+		#sudo launchctl bootstrap system /Library/LaunchDaemons/net.sshd.plist #|| : # I do not yet understand why this fails sometimes
+		sudo launchctl enable system/net.sshd
+	fi
+
+	if test "${sshd_config_cksum_after}" != "${sshd_config_cksum_before}" -o "${sshd_plist_cksum_after}" != "${sshd_plist_cksum_before}"
+	then
+		sudo launchctl kickstart -kp system/net.sshd
+	else
+		sudo launchctl kickstart -p system/net.sshd
+	fi
+fi
 
 if test "${ME_CONTEXT}" = "work"
 then
@@ -194,7 +283,7 @@ else
 		mas install "${tailscale_app_id}"
 	else
 		# Keep it up-to-date
-		mas upgrade
+		mas upgrade Tailscale
 	fi
 fi
 fi
@@ -249,5 +338,16 @@ do
 done
 unset IFS
 
-print_notice_message "May need to manually configure: lock screen immediately after display is off, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
+#
+# DNS Server Configuration (unbound)
+#
+
+if test "${ME_CONTEXT}" = "personal" -a "${_is_dns_server}" = "true"
+then
+	create_darwin_system_user "_unbound" "${_unbound_user_and_group_id}" || if test "${?}" != "2"; then exit 1; fi
+
+	. /"${HOME}"/.scripts/setup.d/unbound.d/setup.sh
+fi
+
+print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to ABC - Extended, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
 

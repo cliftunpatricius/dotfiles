@@ -29,6 +29,31 @@ print_error_message() { printf '%s\n' "$(print_red_text "${*}")" >&2; }
 print_error_message_from_file() { if test -s "${1}"; then print_error_message "$(cat "${1}")"; fi; }
 
 #
+# Sanity Checks
+#
+
+exit_upon_os_mismatch() {
+	unset exit_upon_os_mismatch__required_os
+
+	if test "${#}" -lt "1"
+	then
+		print_error_message "usage: exit_upon_os_mismatch <required_os>"
+		return 1
+	fi
+
+	if test -n "${1}"
+	then
+		exit_upon_os_mismatch__required_os="${1}"
+	fi
+
+	if test "${ME_OPERATING_SYSTEM}" != "${exit_upon_os_mismatch__required_os}"
+	then
+		printf '%s\n' "Exiting because ${ME_OPERATING_SYSTEM} != ${exit_upon_os_mismatch__required_os}"
+		exit 1
+	fi
+}
+
+#
 # User Input
 #
 

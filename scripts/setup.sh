@@ -28,6 +28,7 @@ scripts
 shellrc
 shellrc.d
 ssh/config
+unbound.d
 zprofile
 zshrc
 dotfiles_settings"
@@ -75,6 +76,64 @@ fi
 
 . "${HOME}/.scripts/_lib.sh"
 . "${HOME}/.dotfiles_settings"
+
+#
+# Script-specific Subroutines
+#
+
+usage() {
+	echo "Usage
+	${0} [-d|-f|-g|-h|-m|-r]
+
+Parameters
+	-d	Configures a DNS server on this machine
+
+	-f	Configures a file server on this machine
+
+	-g	Installs a GUI on this machine
+
+	-h	Print this usage and exit
+
+	-m	Configures a media server on this machine
+
+	-r	Configures a router on this machine"
+}
+
+#
+# Parse Parameters
+#
+
+# Defaults
+_is_dns_server="false"
+_is_file_server="false"
+_is_media_server="false"
+_is_router="false"
+_install_gui="false"
+
+while getopts 'dfghmr' OPTION
+do
+	case "${OPTION}" in
+		d)
+			readonly _is_dns_server="true"
+			;;
+		f)
+			readonly _is_file_server="true"
+			;;
+		g)
+			readonly _install_gui="true"
+			;;
+		m)
+			readonly _is_media_server="true"
+			;;
+		r)
+			readonly _is_router="true"
+			;;
+		?)
+			usage >&2
+			exit 1
+			;;
+	esac
+done
 
 #
 # Cross-platform Configurations Requiring User Input
@@ -141,15 +200,19 @@ _shell=""
 
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
+	readonly _required_os="OpenBSD"
 	. "${HOME}/.scripts/setup.d/_openbsd.sh"
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
+	readonly _required_os="FreeBSD"
 	. "${HOME}/.scripts/setup.d/_freebsd.sh"
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
+	readonly _required_os="Linux"
 	. "${HOME}/.scripts/setup.d/_linux.sh"
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
+	readonly _required_os="Darwin"
 	. "${HOME}/.scripts/setup.d/_darwin.sh"
 fi
 
