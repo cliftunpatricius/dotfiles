@@ -43,6 +43,7 @@ unbound_enable_service() {
 		sudo chown -R _unbound:staff /usr/local/etc/unbound
 		sudo chmod 660 /usr/local/etc/unbound/*
 
+		unbound_plist_chsum_before="$(cksum /Library/LaunchDaemons/net.unbound.plist | awk '{print $1}')"
 		echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -67,9 +68,14 @@ unbound_enable_service() {
 		<true/>
 	</dict>
 </plist>' | sudo tee /Library/LaunchDaemons/net.unbound.plist > /dev/null
+		unbound_plist_chsum_after="$(cksum /Library/LaunchDaemons/net.unbound.plist | awk '{print $1}')"
 
-		# May want to include logic similar to how sshd is handled
-		sudo launchctl enable system/net.unbound
+		if test "${unbound_plist_cksum_after}" != "${unbound_plist_cksum_before}"
+		then
+			print_notice_message "Toggling system/net.unbound"
+			sudo launchctl disable system/net.unbound
+			sudo launchctl enable system/net.unbound
+		fi
 	fi
 }
 
@@ -79,6 +85,7 @@ unbound_enable_blacklist_updater() {
 		:
 	elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 	then
+		unbound_blacklist_updater_plist_chsum_before="$(cksum /Library/LaunchDaemons/net.unbound.blacklist.updater.plist | awk '{print $1}')"
 		echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -93,11 +100,13 @@ unbound_enable_blacklist_updater() {
 			<string>/usr/local/sbin/update_unbound_blacklist.sh</string>
 		</array>
 
-		<key>RunAtLoad</key>
-		<true/>
-
-		<key>StartInterval</key>
-		<integer>21600</integer>
+		<key>StartCalendarInterval</key>
+		<dict>
+			<key>Hour</key>
+			<integer>2</integer>
+			<key>Minute</key>
+			<integer>0</integer>
+		</dict>
 
 		<key>StandardErrorPath</key>
 		<string>/var/log/system.log</string>
@@ -105,12 +114,15 @@ unbound_enable_blacklist_updater() {
 		<key>StandardOutPath</key>
 		<string>/var/log/system.log</string>
 	</dict>
-</plist>' | sudo tee /Library/LaunchDaemons/net.unbound.blacklist.updater > /dev/null
+</plist>' | sudo tee /Library/LaunchDaemons/net.unbound.blacklist.updater.plist > /dev/null
+		unbound_blacklist_updater_plist_chsum_after="$(cksum /Library/LaunchDaemons/net.unbound.blacklist.updater.plist | awk '{print $1}')"
 
-		# May want to include logic similar to how sshd is handled
-		#sudo launchctl bootstrap system /Library/LaunchDaemons/net.unbound.blacklist.updater
-		sudo launchctl enable system/net.unbound.blacklist.updater
-		#sudo launchctl kickstart -kp system/net.unbound.blacklist.updater
+		if test "${unbound_blacklist_updater_plist_cksum_after}" != "${unbound_blacklist_updater_plist_cksum_before}"
+		then
+			print_notice_message "Toggling system/net.unbound.blacklist.updater"
+			sudo launchctl disable system/net.unbound.blacklist.updater
+			sudo launchctl enable system/net.unbound.blalcklist.updater
+		fi
 	fi
 }
 

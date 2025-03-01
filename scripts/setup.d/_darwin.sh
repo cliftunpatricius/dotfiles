@@ -219,16 +219,15 @@ then
 </plist>' | sudo tee /Library/LaunchDaemons/net.sshd.plist > /dev/null
 	sshd_plist_cksum_after="$(cksum /Library/LaunchDaemons/net.sshd.plist | awk '{print $1}')"
 
-	# Likely will get an error if the plits file does not yet exist.
-	if test "${sshd_plist_cksum_before}" != "${sshd_plist_cksum_after}"
+	if test "${sshd_plist_cksum_after}" != "${sshd_plist_cksum_before}"
 	then
-		sudo launchctl bootout system /Library/LaunchDaemons/net.sshd.plist
-		sudo launchctl disable system/net.sshd
-		sudo launchctl bootstrap system /Library/LaunchDaemons/net.sshd.plist
+		#sudo launchctl bootout system /Library/LaunchDaemons/net.sshd.plist #|| : # I do not yet understand why this fails sometimes
+		#sudo launchctl disable system/net.sshd
+		#sudo launchctl bootstrap system /Library/LaunchDaemons/net.sshd.plist #|| : # I do not yet understand why this fails sometimes
 		sudo launchctl enable system/net.sshd
 	fi
 
-	if test "${sshd_config_cksum_before}" != "${sshd_config_cksum_after}" -o "${sshd_plist_cksum_before}" != "${sshd_plist_cksum_after}"
+	if test "${sshd_config_cksum_after}" != "${sshd_config_cksum_before}" -o "${sshd_plist_cksum_after}" != "${sshd_plist_cksum_before}"
 	then
 		sudo launchctl kickstart -kp system/net.sshd
 	else
