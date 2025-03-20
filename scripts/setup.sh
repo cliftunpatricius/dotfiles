@@ -144,6 +144,11 @@ prompt_user_for_git_setting "global" "user.email"
 prompt_user_for_git_setting "global" "user.name"
 prompt_user_for_git_setting "global" "push.default"
 prompt_user_for_git_setting "global" "init.defaultBranch"
+prompt_user_for_git_setting "global" "commit.gpgsign"
+if test "$(git config --global commit.gpgsign)" = "true"
+then
+	prompt_user_for_git_setting "global" "user.signingkey"
+fi
 
 print_notice_message "Git settings for ${HOME}/dotfiles:"
 # Use a sub-shell for safer `cd`ing
@@ -154,6 +159,11 @@ print_notice_message "Git settings for ${HOME}/dotfiles:"
 	prompt_user_for_git_setting "local" "user.name"
 	prompt_user_for_git_setting "local" "push.default"
 	prompt_user_for_git_setting "local" "init.defaultBranch"
+	prompt_user_for_git_setting "local" "commit.gpgsign"
+	if test "$(git config --local commit.gpgsign)" = "true"
+	then
+		prompt_user_for_git_setting "local" "user.signingkey"
+	fi
 )
 
 # Newsboat
