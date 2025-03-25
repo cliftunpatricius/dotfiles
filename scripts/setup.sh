@@ -267,15 +267,16 @@ then
 
 	while read -r url
 	do
-		repo_org="$(printf '%s' "${url}" | awk -F ';' '{print $1;}' | awk -F ':' '{print $2;}' | awk -F '/' '{print $1;}')"
-		repo_name="$(printf '%s' "${url}" | awk -F ';' '{print $1;}' | awk -F '/' '{print $2;}' | sed 's/\.git$//')"
+		repo_url="$(printf '%s' "${url}" | awk -F ';' '{print $1;}')"
+		repo_org="$(printf '%s' "${repo_url}" | awk -F ':' '{print $2;}' | awk -F '/' '{print $1;}')"
+		repo_name="$(printf '%s' "${repo_url}" | awk -F '/' '{print $2;}' | sed 's/\.git$//')"
 		upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
 
 		test -d "${HOME}/code/${repo_org}" || mkdir "${HOME}/code/${repo_org}"
 
 		if ! test -d "${HOME}/code/${repo_org}/${repo_name}"
 		then
-			git -C "${HOME}/code/${repo_org}" clone "${url}"
+			git -C "${HOME}/code/${repo_org}" clone "${repo_url}"
 		else
 			printf '%s: %s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already cloned to ${HOME}/code/${repo_org}/${repo_name}"
 		fi
