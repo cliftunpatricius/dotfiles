@@ -144,9 +144,15 @@ prompt_user_for_git_setting "global" "user.email"
 prompt_user_for_git_setting "global" "user.name"
 prompt_user_for_git_setting "global" "push.default"
 prompt_user_for_git_setting "global" "init.defaultBranch"
+prompt_user_for_git_setting "global" "tag.gpgsign"
 prompt_user_for_git_setting "global" "commit.gpgsign"
-if test "$(git config --global commit.gpgsign)" = "true"
+if test "$(git config --global commit.gpgsign)" = "true" -o "$(git config --global tag.gpgsign)" = "true"
 then
+	prompt_user_for_git_setting "global" "gpg.format"
+	if test "$(git config --global gpg.format)" = "ssh"
+	then
+		prompt_user_for_git_setting "global" "gpg.ssh.allowedSignersFile"
+	fi
 	prompt_user_for_git_setting "global" "user.signingkey"
 fi
 
@@ -159,9 +165,15 @@ print_notice_message "Git settings for ${HOME}/dotfiles:"
 	prompt_user_for_git_setting "local" "user.name"
 	prompt_user_for_git_setting "local" "push.default"
 	prompt_user_for_git_setting "local" "init.defaultBranch"
+	prompt_user_for_git_setting "local" "tag.gpgsign"
 	prompt_user_for_git_setting "local" "commit.gpgsign"
-	if test "$(git config --local commit.gpgsign)" = "true"
+	if test "$(git config --local commit.gpgsign)" = "true" -o "$(git config --local tag.gpgsign)" = "true"
 	then
+		prompt_user_for_git_setting "local" "gpg.format"
+		if test "$(git config --local gpg.format)" = "ssh"
+		then
+			prompt_user_for_git_setting "local" "gpg.ssh.allowedSignersFile"
+		fi
 		prompt_user_for_git_setting "local" "user.signingkey"
 	fi
 )
@@ -283,6 +295,8 @@ fi
 # Misc. work configurations
 if test "${ME_CONTEXT}" = "work"
 then
+	gh auth status > /dev/null 2> /dev/null || gh auth login
+
 	az vm list > /dev/null 2> /dev/null || az login
 
 	gcloud projects list > /dev/null || gcloud auth login
