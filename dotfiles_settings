@@ -1,5 +1,4 @@
 #!/bin/sh
 
 readonly __disk_encrypt_prompt__="false"
-readonly __ruby_version__="3.2" # Puppet/OpenVox 8 uses 3.2
 
