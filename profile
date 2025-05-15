@@ -14,6 +14,15 @@ else
 fi
 export ME_CONTEXT
 
+if test "${ME_CONTEXT}" = "work"
+then
+	# Puppet/OpenVox 8 needs ruby 3.2
+	# Puppet/OpenVox 7 needs ruby 2.7
+	PDK_PUPPET_VERSION="8"
+	RUBY_VERSION="3.2"
+	export PDK_PUPPET_VERSION RUBY_VERSION
+fi
+
 if test "$(uname -s)" = "Darwin"
 then
 	if test "$(uname -m)" = "arm64"
@@ -55,4 +64,18 @@ export ENV
 
 GPG_TTY="$(tty)"
 export GPG_TTY
+
+if test -d "${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin"
+then
+	GEM_VERSION="$(${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin/gem --version 2> /dev/null)"
+	PATH="${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin:${PATH}"
+	export GEM_VERSION PATH
+fi
+
+RUBY_GEMS_RUBY_VERSION="$(find "${HOMEBREW_PREFIX}"/lib/ruby/gems/ -maxdepth 1 -type d -name "${RUBY_VERSION}.*" | sort -rV | head -n 1 | xargs basename)"
+if test -d "${HOME}/.gem/ruby/${RUBY_GEMS_RUBY_VERSION}/bin"
+then
+	PATH="${HOME}/.gem/ruby/${RUBY_GEMS_RUBY_VERSION}/bin:${PATH}"
+	export PATH
+fi
 

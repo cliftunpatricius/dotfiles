@@ -98,12 +98,12 @@ brew_formulae="bash dash oksh tcsh zsh
 	lynx
 	mas
 	newsboat
-	smudge/smudge/nightlight
 	nmap
 	openssh
 	openvi
 	pdsh
 	shellcheck
+	smudge/smudge/nightlight
 	tmux
 	tree
 	vegeta
@@ -127,9 +127,10 @@ then
 		azure-cli
 		go
 		hadolint
+		hashicorp/tap/terraform
 		infracost
 		kubelogin
-		hashicorp/tap/terraform
+		ruby@3.2
 		tiger-vnc"
 fi
 readonly brew_formulae
@@ -165,7 +166,6 @@ then
 		google-drive
 		keeper-password-manager
 		powershell
-		puppetlabs/puppet/puppet-agent
 		slack
 		windows-app
 		zoom"
@@ -174,6 +174,14 @@ readonly brew_casks
 
 # shellcheck disable=SC2086
 brew install --cask ${brew_casks}
+
+if test "${ME_CONTEXT}" = "work" -a -n "${GEM_VERSION}"
+then
+	gem install --user-install \
+		metadata-json-lint \
+		puppet-lint \
+		rubocop
+fi
 
 # If this is being used as a server of any kind, enable the SSH service
 if test "${ME_CONTEXT}" = "personal" \
