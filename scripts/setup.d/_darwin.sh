@@ -130,7 +130,7 @@ then
 		hashicorp/tap/terraform
 		infracost
 		kubelogin
-		ruby@3.2
+		ruby@"${RUBY_VERSION}"
 		tiger-vnc"
 fi
 readonly brew_formulae
