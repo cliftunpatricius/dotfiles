@@ -67,7 +67,7 @@ export GPG_TTY
 
 if test -d "${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin"
 then
-	GEM_VERSION="$(${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin/gem --version 2> /dev/null)"
+	GEM_VERSION="$("${HOMEBREW_PREFIX}"/opt/ruby@"${RUBY_VERSION}"/bin/gem --version 2> /dev/null)"
 	PATH="${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin:${PATH}"
 	export GEM_VERSION PATH
 fi
