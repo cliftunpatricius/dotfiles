@@ -13,30 +13,26 @@ then
 	exit 1
 fi
 
+if test "${PWD}" != "${HOME}/dotfiles"
+then
+	printf 'Must be executed from %s\n' "${HOME}/dotfiles" >&2
+	exit 1
+fi
+
 #
 # First-run Bootstrapping
 #
 
-symlinks="bash_profile
-bashrc
-inputrc
-kshrc
-lynxrc
-newsboat.d
-profile
-scripts
-shellrc
-shellrc.d
-ssh/config
-unbound.d
-zprofile
-zshrc
-dotfiles_settings"
-
 link_created="false"
-for link in ${symlinks}
+# shellcheck disable=SC2044
+for link in $(find dotfiles -mindepth 1 -maxdepth 1)
 do
-	if test "$(readlink "${HOME}/.${link}")" != "${HOME}/dotfiles/${link}"
+	if test "${link}" = "ssh"
+	then
+		link="ssh/config"
+	fi
+
+	if test "$(readlink "${HOME}/.${link}")" != "${HOME}/dotfiles/dotfiles/${link}"
 	then
 		if test -d "${HOME}/.${link}"
 		then
@@ -46,7 +42,7 @@ do
 			rm -f "${HOME}/.${link}"
 		fi
 
-		ln -s "${HOME}/dotfiles/${link}" "${HOME}/.${link}"
+		ln -s "${HOME}/dotfiles/dotfiles/${link}" "${HOME}/.${link}"
 		link_created="true"
 	fi
 done
@@ -74,8 +70,8 @@ fi
 # Source Libraries
 #
 
-. "${HOME}/.scripts/_lib.sh"
-. "${HOME}/.dotfiles_settings"
+. scripts/_lib.sh
+. dotfiles/_settings
 
 #
 # Script-specific Subroutines
@@ -104,29 +100,29 @@ Parameters
 #
 
 # Defaults
-_is_dns_server="false"
-_is_file_server="false"
-_is_media_server="false"
-_is_router="false"
-_install_gui="false"
+ME_IS_DNS_SERVER="false"
+ME_IS_FILE_SERVER="false"
+ME_IS_MEDIA_SERVER="false"
+ME_IS_ROUTER="false"
+ME_HAS_GUI="false"
 
 while getopts 'dfghmr' OPTION
 do
 	case "${OPTION}" in
 		d)
-			readonly _is_dns_server="true"
+			export ME_IS_DNS_SERVER="true"
 			;;
 		f)
-			readonly _is_file_server="true"
+			export ME_IS_FILE_SERVER="true"
 			;;
 		g)
-			readonly _install_gui="true"
+			export ME_HAS_GUI="true"
 			;;
 		m)
-			readonly _is_media_server="true"
+			export ME_IS_MEDIA_SERVER="true"
 			;;
 		r)
-			readonly _is_router="true"
+			export ME_IS_ROUTER="true"
 			;;
 		?)
 			usage >&2
@@ -222,24 +218,20 @@ _shell=""
 
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
-	readonly _required_os="OpenBSD"
-	. "${HOME}/.scripts/setup.d/_openbsd.sh"
+	. scripts/_openbsd.sh
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
-	readonly _required_os="FreeBSD"
-	. "${HOME}/.scripts/setup.d/_freebsd.sh"
+	. scripts/_freebsd.sh
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
-	readonly _required_os="Linux"
-	. "${HOME}/.scripts/setup.d/_linux.sh"
+	. scripts/_linux.sh
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
-	readonly _required_os="Darwin"
-	. "${HOME}/.scripts/setup.d/_darwin.sh"
+	. scripts/_darwin.sh
 fi
 
 #
-# Cross-platform Configuration _Not_ Requiring User Input
+# Cross-platform Configuration (does _not_ require user input)
 #
 
 # Create the parent directories of files that will not be committed to this public repo.

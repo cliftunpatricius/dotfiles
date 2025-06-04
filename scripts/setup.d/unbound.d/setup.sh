@@ -6,7 +6,7 @@ set -e
 # Source Libraries
 #
 
-. "${HOME}"/.scripts/setup.d/unbound.d/_lib.sh
+. scripts/setup.d/unbound.d/_lib.sh
 
 unbound_ensure_files
 

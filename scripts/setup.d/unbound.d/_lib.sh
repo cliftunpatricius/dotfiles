@@ -43,7 +43,7 @@ unbound_enable_service() {
 		sudo chown -R _unbound:staff /usr/local/etc/unbound
 		sudo chmod 660 /usr/local/etc/unbound/*
 
-		unbound_plist_chsum_before="$(cksum /Library/LaunchDaemons/net.unbound.plist | awk '{print $1}')"
+		unbound_plist_cksum_before="$(cksum /Library/LaunchDaemons/net.unbound.plist | awk '{print $1}')"
 		echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -68,7 +68,7 @@ unbound_enable_service() {
 		<true/>
 	</dict>
 </plist>' | sudo tee /Library/LaunchDaemons/net.unbound.plist > /dev/null
-		unbound_plist_chsum_after="$(cksum /Library/LaunchDaemons/net.unbound.plist | awk '{print $1}')"
+		unbound_plist_cksum_after="$(cksum /Library/LaunchDaemons/net.unbound.plist | awk '{print $1}')"
 
 		if test "${unbound_plist_cksum_after}" != "${unbound_plist_cksum_before}"
 		then
@@ -85,7 +85,7 @@ unbound_enable_blacklist_updater() {
 		:
 	elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 	then
-		unbound_blacklist_updater_plist_chsum_before="$(cksum /Library/LaunchDaemons/net.unbound.blacklist.updater.plist | awk '{print $1}')"
+		unbound_blacklist_updater_plist_cksum_before="$(cksum /Library/LaunchDaemons/net.unbound.blacklist.updater.plist | awk '{print $1}')"
 		echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -115,7 +115,7 @@ unbound_enable_blacklist_updater() {
 		<string>/var/log/system.log</string>
 	</dict>
 </plist>' | sudo tee /Library/LaunchDaemons/net.unbound.blacklist.updater.plist > /dev/null
-		unbound_blacklist_updater_plist_chsum_after="$(cksum /Library/LaunchDaemons/net.unbound.blacklist.updater.plist | awk '{print $1}')"
+		unbound_blacklist_updater_plist_cksum_after="$(cksum /Library/LaunchDaemons/net.unbound.blacklist.updater.plist | awk '{print $1}')"
 
 		if test "${unbound_blacklist_updater_plist_cksum_after}" != "${unbound_blacklist_updater_plist_cksum_before}"
 		then

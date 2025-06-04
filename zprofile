@@ -1,4 +1,0 @@
-#!/bin/sh
-
-. "${HOME}/.profile"
-

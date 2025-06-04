@@ -1,0 +1,31 @@
+# KEYBINDINGS:
+# 4 = mod (windows key)
+# S = shift
+# C = control
+# M = meta (alt)
+
+bind-key M-r	exec
+#bind CM-l	label
+bind-key CM-t	"xterm -bg black -fg white +sb"
+bind-key CM-m	menusearch
+bind-key CMS-w	openbsd-wallpaper
+bind-key CM-b	firefox
+mousebind M-1	window_move
+mousebind CM-1	window_resize
+
+# Application menu
+command firefox firefox
+command xterm xterm
+
+# Inherit current selected group
+sticky	yes
+
+# Autogroups for windows.
+autogroup 0 "termbar,termbar"
+autogroup 2 "firefox,firefox-bin"
+
+fontname "spleen:pixelsize=16:antialias=false"
+gap 35 5 5 5
+
+ignore "termbar"
+

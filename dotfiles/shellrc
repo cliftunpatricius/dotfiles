@@ -4,24 +4,35 @@
 # Source Libraries
 #
 
-. "${HOME}/.scripts/_lib.sh"
+# shellcheck source=scripts/_lib.sh
+. .scripts/_lib.sh
 
 #
 # Platform-specific Configurations
 #
 
+# Source paths are hardcoded so that shellcheck can follow them
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
-	. "${HOME}/.shellrc.d/openbsd"
+	# shellcheck source=dotfiles/shellrc.d/openbsd
+	. .shellrc.d/openbsd
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
-	. "${HOME}/.shellrc.d/freebsd"
+	# shellcheck source=dotfiles/shellrc.d/freebsd
+	. .shellrc.d/freebsd
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
-	. "${HOME}/.shellrc.d/linux"
+	# shellcheck source=dotfiles/shellrc.d/linux
+	. .shellrc.d/linux
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
-	. "${HOME}/.shellrc.d/darwin"
+	# shellcheck source=dotfiles/shellrc.d/darwin
+	. .shellrc.d/darwin
+fi
+
+if test "${ME_OPERATING_SYSTEM}" != "Darwin"
+then
+	test -f "${SSH_AUTH_SOCK}" || eval "$(ssh-agent -a "${SSH_AUTH_SOCK}")" &
 fi
 
 #
