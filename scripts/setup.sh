@@ -19,59 +19,17 @@ then
 	exit 1
 fi
 
-#
-# First-run Bootstrapping
-#
-
-link_created="false"
-# shellcheck disable=SC2044
-for link in $(find dotfiles -mindepth 1 -maxdepth 1)
-do
-	if test "${link}" = "ssh"
-	then
-		link="ssh/config"
-	fi
-
-	if test "$(readlink "${HOME}/.${link}")" != "${HOME}/dotfiles/dotfiles/${link}"
-	then
-		if test -d "${HOME}/.${link}"
-		then
-			rm -rf "${HOME}/.${link}"
-		elif test -e "${HOME}/.${link}"
-		then
-			rm -f "${HOME}/.${link}"
-		fi
-
-		ln -s "${HOME}/dotfiles/dotfiles/${link}" "${HOME}/.${link}"
-		link_created="true"
-	fi
-done
-
-if test "${link_created}" = "true"
-then
-	printf '%s\n' "At least one missing symlink was created. Launch a new, interactive shell and run this script again." >&2
-	exit
-fi
-
-# Ensure this is running in a new, interactive shell and picking up the custom environment variables.
-if test -z "${ME_ARCHITECTURE}" \
-	-o -z "${ME_OPERATING_SYSTEM}" \
-	-o -z "${ME_HOSTNAME}" \
-	-o -z "${ME_CONTEXT}" \
-	-o -z "${EDITOR}" \
-	-o -z "${VISUAL}" \
-	-o -z "${ENV}"
-then
-	printf '%s\n' "At least one custom environment variable is missing. Exit the current shell and run this script again in a new, interactive shell to pickup the custom environment variables." >&2
+# Ensure critical custom environment variables exist
+env | grep -Eq '^ME_(ARCHITECTURE|CONTEXT|OPERATING_SYSTEM)=' || {
+	printf '%s\n' "At least one critical custom environment variable is missing. Run: ./install_dotfiles.sh" >&2
 	exit 1
-fi
+}
 
 #
 # Source Libraries
 #
 
 . scripts/_lib.sh
-. dotfiles/_settings
 
 #
 # Script-specific Subroutines
@@ -152,11 +110,9 @@ then
 	prompt_user_for_git_setting "global" "user.signingkey"
 fi
 
-print_notice_message "Git settings for ${HOME}/dotfiles:"
+print_notice_message "Git settings for ${PWD}:"
 # Use a sub-shell for safer `cd`ing
 (
-	test "$(pwd)" = "${HOME}/dotfiles" || cd "${HOME}/dotfiles"
-
 	prompt_user_for_git_setting "local" "user.email"
 	prompt_user_for_git_setting "local" "user.name"
 	prompt_user_for_git_setting "local" "push.default"
@@ -173,41 +129,6 @@ print_notice_message "Git settings for ${HOME}/dotfiles:"
 		prompt_user_for_git_setting "local" "user.signingkey"
 	fi
 )
-
-# Newsboat
-test -d "${HOME}/.newsboat" || mkdir "${HOME}/.newsboat"
-
-readonly newsboat_files="config urls"
-for f in ${newsboat_files}
-do
-	newsboat_path="${HOME}/.newsboat/${f}"
-	old_symlink_dst="$(readlink "${HOME}/.newsboat/${f}" || printf '')"
-	new_symlink_dst="${HOME}/.newsboat.d/${f}_${ME_CONTEXT}"
-
-	if test -L "${newsboat_path}" -a "${old_symlink_dst}" = "${new_symlink_dst}"
-	then
-		break
-	elif test -L "${newsboat_path}" -a "${old_symlink_dst}" != "${new_symlink_dst}"
-	then
-		rm -v "${newsboat_path}"
-		ln -svw "${new_symlink_dst}" "${newsboat_path}"
-	elif test -f "${newsboat_path}"
-	then
-		print_notice_message "File already exists: $(ls -l "${newsboat_path}")"
-		default_response="n"
-		prompt_user_with_default "${default_response}" 'Replace the aforementioned file (y/n)?'
-		read -r actual_response
-		actual_response="$(printf '%s' "${actual_response}" | sed '/^\s*$/d')"
-
-		if test "${actual_response}" = "y"
-		then
-			rm -v "${newsboat_path}"
-			ln -svw "${new_symlink_dst}" "${newsboat_path}"
-		fi
-	else
-		ln -svw "${new_symlink_dst}" "${newsboat_path}"
-	fi
-done
 
 #
 # Platform-specific Configurations (may require user input)

@@ -14,7 +14,6 @@ test "${ME_OPERATING_SYSTEM}" = "Darwin" || exit 1
 #
 
 . scripts/_lib_darwin.sh
-. dotfiles/_settings
 
 #
 # Main
@@ -24,7 +23,7 @@ readonly _homebrew_tailscale="false"
 readonly _unbound_user_and_group_id="499"
 
 # fdesetup
-if test "${ME_CONTEXT}" != "work" -a "$(fdesetup status)" = "FileVault is Off." -a "${__disk_encrypt_prompt__}" = "true"
+if test "${ME_CONTEXT}" != "work" -a "$(fdesetup status)" = "FileVault is Off."
 then
 	prompt_user_with_default "Enable full-disk encryption? (only \"yes\" will enable it)" "no"
 	read -r disk_encrypt_response
