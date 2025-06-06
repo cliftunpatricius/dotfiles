@@ -30,11 +30,6 @@ then
 	. .shellrc.d/darwin
 fi
 
-if test "${ME_OPERATING_SYSTEM}" != "Darwin"
-then
-	test -f "${SSH_AUTH_SOCK}" || eval "$(ssh-agent -a "${SSH_AUTH_SOCK}")" &
-fi
-
 #
 # Cross-platform Aliases And Subroutines
 #

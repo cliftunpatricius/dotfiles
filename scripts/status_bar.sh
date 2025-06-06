@@ -55,11 +55,10 @@ readonly ssid iface private_ip public_ip
 # Status Bar
 #
 
-printf 'battery: %s (%s) | cpu: %s (%sMHz) | mem_free: %s | network: %s / %s (%s) | %s | %s\n' \
+printf 'battery: %s (%s) | cpu: %s (%sMHz) | mem_free: %s | network: %s / %s (%s) | %s\n' \
 	"${battery_percentage_remaining}${percent_symbol}" "${battery_charging_comment}" \
 	"${cpu_temp}${degrees_celsius_symbol}" "${cpu_speed}" \
 	"${mem_free}" \
 	"${public_ip}" "${private_ip}" "${ssid}" \
-	"${USER}@$(uname -n)" \
 	"${timestamp}"
 
