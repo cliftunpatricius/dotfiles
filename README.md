@@ -23,8 +23,9 @@ My own digital ramblings about a sane CLI experience across various platforms (o
 ## Linting
 
 From the root directory of this repository, execute:
+
 ```sh
-grep -ril '^#!/bin/sh' | grep -Ev '^\.git' | xargs shellcheck -ax
+grep -ril '^#!/bin/sh' . | grep -Ev '^\./\.git' | xargs shellcheck -ax
 ```
 
 ## Testing
