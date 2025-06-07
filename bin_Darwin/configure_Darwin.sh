@@ -54,9 +54,14 @@ fi
 
 if ! test -f ~/Library/LaunchAgents/com.ldaws.CapslockEscape.plist
 then
-	# Map CapsLock to Escape
-readonly caps_lock_to_escape_mapping='{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}'
-hidutil property --set "${caps_lock_to_escape_mapping}" > /dev/null
+	# https://developer.apple.com/library/archive/technotes/tn2450/_index.html#//apple_ref/doc/uid/DTS40017618-CH1-KEY_TABLE_USAGES
+	readonly caps_lock_code="0x700000039"
+	readonly escape_code="0x700000029"
+	readonly left_control_code="0x7000000E0"
+
+	# Map Caps Lock to something else
+readonly caps_lock_remapping='{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":'"${caps_lock_code}"',"HIDKeyboardModifierMappingDst":'"${left_control_code}"'}]}'
+hidutil property --set "${caps_lock_remapping}" > /dev/null
 
 	# Now, make that persist
 	if ! test -d "${HOME}/Library/LaunchAgents"
@@ -64,28 +69,28 @@ hidutil property --set "${caps_lock_to_escape_mapping}" > /dev/null
 		mkdir -p "${HOME}/Library/LaunchAgents"
 	fi
 
-	cat > "${HOME}/Library/LaunchAgents/com.ldaws.CapslockEscape.plist" <<EOF
+	cat > "${HOME}/Library/LaunchAgents/com.ldaws.CapslockRemapping.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!-- Place in ~/Library/LaunchAgents/ -->
-<!-- launchctl load com.ldaws.CapslockEscape.plist -->
+<!-- launchctl load com.ldaws.CapslockRemapping.plist -->
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>com.ldaws.CapslockEscape</string>
+    <string>com.ldaws.CapslockRemapping</string>
     <key>ProgramArguments</key>
     <array>
       <string>/usr/bin/hidutil</string>
       <string>property</string>
       <string>--set</string>
-      <string>${caps_lock_to_escape_mapping}</string>
+      <string>${caps_lock_remapping}</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
   </dict>
 </plist>
 EOF
-	sudo launchctl enable system/com.ldaws.CapslockEscape.plist
+	sudo launchctl enable system/com.ldaws.CapslockRemapping.plist
 fi
 
 # Install CLI packages.
