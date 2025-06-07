@@ -6,7 +6,8 @@ set -e
 # Source Libraries
 #
 
-. scripts/setup.d/unbound.d/_lib.sh
+# shellcheck source=lib_Darwin/_unbound.sh
+. "${HOME}"/lib/_unbound.sh
 
 unbound_ensure_files
 

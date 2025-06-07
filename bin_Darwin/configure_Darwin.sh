@@ -13,7 +13,8 @@ test "${ME_OPERATING_SYSTEM}" = "Darwin" || exit 1
 # Source Libraries
 #
 
-. scripts/_lib_darwin.sh
+# shellcheck source=lib_Darwin/_Darwin.sh
+. "${HOME}"/lib/_Darwin.sh
 
 #
 # Main
@@ -128,6 +129,7 @@ then
 	brew tap hashicorp/tap
 
 	brew_formulae="${brew_formulae}
+		act
 		awscli
 		azure-cli
 		go
@@ -357,7 +359,8 @@ if test "${ME_CONTEXT}" = "personal" -a "${ME_IS_DNS_SERVER}" = "true"
 then
 	create_darwin_system_user "_unbound" "${_unbound_user_and_group_id}" || if test "${?}" != "2"; then exit 1; fi
 
-	. scripts/setup.d/unbound.d/setup.sh
+	# shellcheck source=bin_Darwin/configure_unbound.sh
+	. "${HOME}"/bin/configure_unbound.sh
 fi
 
 print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to ABC - Extended, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."

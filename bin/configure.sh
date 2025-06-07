@@ -29,7 +29,8 @@ env | grep -Eq '^ME_(ARCHITECTURE|CONTEXT|OPERATING_SYSTEM)=' || {
 # Source Libraries
 #
 
-. scripts/_lib.sh
+# shellcheck source=lib/_lib.sh
+. "${HOME}"/lib/_lib.sh
 
 #
 # Script-specific Subroutines
@@ -90,45 +91,12 @@ do
 done
 
 #
-# Cross-platform Configurations Requiring User Input
+# Cross-platform Configuration (does _not_ require user input)
 #
 
-print_notice_message "Global git settings:"
-prompt_user_for_git_setting "global" "user.email"
-prompt_user_for_git_setting "global" "user.name"
-prompt_user_for_git_setting "global" "push.default"
-prompt_user_for_git_setting "global" "init.defaultBranch"
-prompt_user_for_git_setting "global" "tag.gpgsign"
-prompt_user_for_git_setting "global" "commit.gpgsign"
-if test "$(git config --global commit.gpgsign)" = "true" -o "$(git config --global tag.gpgsign)" = "true"
-then
-	prompt_user_for_git_setting "global" "gpg.format"
-	if test "$(git config --global gpg.format)" = "ssh"
-	then
-		prompt_user_for_git_setting "global" "gpg.ssh.allowedSignersFile"
-	fi
-	prompt_user_for_git_setting "global" "user.signingkey"
-fi
-
-print_notice_message "Git settings for ${PWD}:"
-# Use a sub-shell for safer `cd`ing
-(
-	prompt_user_for_git_setting "local" "user.email"
-	prompt_user_for_git_setting "local" "user.name"
-	prompt_user_for_git_setting "local" "push.default"
-	prompt_user_for_git_setting "local" "init.defaultBranch"
-	prompt_user_for_git_setting "local" "tag.gpgsign"
-	prompt_user_for_git_setting "local" "commit.gpgsign"
-	if test "$(git config --local commit.gpgsign)" = "true" -o "$(git config --local tag.gpgsign)" = "true"
-	then
-		prompt_user_for_git_setting "local" "gpg.format"
-		if test "$(git config --local gpg.format)" = "ssh"
-		then
-			prompt_user_for_git_setting "local" "gpg.ssh.allowedSignersFile"
-		fi
-		prompt_user_for_git_setting "local" "user.signingkey"
-	fi
-)
+# Create the parent directories of files that will not be committed to this public repo.
+test -d "${HOME}/.ssh/config.d" || mkdir -p "${HOME}/.ssh/config.d"
+chmod 750 "${HOME}/.ssh/config.d"
 
 #
 # Platform-specific Configurations (may require user input)
@@ -139,34 +107,33 @@ _shell=""
 
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
-	. scripts/_openbsd.sh
+	# shellcheck source=bin_OpenBSD/configure_OpenBSD.sh
+	. "${HOME}"/bin_OpenBSD/configure_OpenBSD.sh
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
-	. scripts/_freebsd.sh
+	# shellcheck source=bin_FreeBSD/configure_FreeBSD.sh
+	. "${HOME}"/bin_FreeBSD/configure_FreeBSD.sh
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
-	. scripts/_linux.sh
+	# shellcheck source=bin_Linux/configure_Linux.sh
+	. "${HOME}"/bin_Linux/configure_Linux.sh
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
-	. scripts/_darwin.sh
+	# shellcheck source=bin_Darwin/configure_Darwin.sh
+	. "${HOME}"/bin_Darwin/configure_Darwin.sh
 fi
 
-#
-# Cross-platform Configuration (does _not_ require user input)
-#
-
-# Create the parent directories of files that will not be committed to this public repo.
-test -d "${HOME}/.ssh/config.d" || mkdir -p "${HOME}/.ssh/config.d"
-chmod 750 "${HOME}/.ssh/config.d"
-
 # Set shell.
-if test "${SHELL}" != "${_shell}"
+if test "${ME_OPERATING_SYSTEM}" != "OpenBSD"
 then
-	if test "$("${_shell}" -c ': && printf OK')" = "OK"
+	if test "${SHELL}" != "${_shell}"
 	then
-		chpass -s "${_shell}"
-	else
-		print_notice_message "Invalid shell path given (${_shell}); Shell remains ${SHELL}"
+		if test "$("${_shell}" -c ': && printf OK')" = "OK"
+		then
+			chpass -s "${_shell}"
+		else
+			print_notice_message "Invalid shell path given (${_shell}); Shell remains ${SHELL}"
+		fi
 	fi
 fi
 
@@ -191,14 +158,18 @@ then
 		then
 			git -C "${HOME}/code/${repo_org}" clone "${repo_url}"
 		else
-			printf '%s: %s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already cloned to ${HOME}/code/${repo_org}/${repo_name}"
+			printf '%s: Already cloned to %s\n' \
+				"$(print_green_text "${repo_org}/${repo_name}")" \
+				"${HOME}/code/${repo_org}/${repo_name}"
 		fi
 
 		if test -z "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
 		then
 			git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
 		else
-			printf '%s: %s:\n%s\n' "$(print_green_text "${repo_org}/${repo_name}")" "Already has upstream set to" "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+			printf '%s: Already has upstream set to:\n%s\n' \
+				"$(print_green_text "${repo_org}/${repo_name}")" \
+				"$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
 		fi
 	done < "${HOME}/code/.my_repos"
 else

@@ -1,5 +1,13 @@
 # dotfiles
 
+* [Introduction](#introduction)
+* [Features](#features)
+* [Linting](#linting)
+* [Testing](#testing)
+* [Usage](#usage)
+
+## Introduction
+
 It was the best of terminals, it was the worst of terminals...
 
 My own digital ramblings about a sane CLI experience across various platforms (oh, and that thing they call a GUI as well...).
@@ -10,31 +18,21 @@ My own digital ramblings about a sane CLI experience across various platforms (o
 * preferred packages and corresponding configurations (`ssh`, `newsboat`, etc.)
 * preferred os-specific customizations
 * automatic downloading of other repositories, when a `~/code/.my_repos` file is present
-* some portions can be customized by editting existing values in the `dotfiles_settings` file
 * `vi` mode, `vi` mode, `vi` mode
 
-### Symlinks created in `"${HOME}"`:
+## Linting
 
+From the root directory of this repository, execute:
+```sh
+grep -ril '^#!/bin/sh' | grep -Ev '^\.git' | xargs shellcheck -ax
 ```
-${HOME}/.bash_profile       ->  ${HOME}/dotfiles/bash_profile
-${HOME}/.bashrc             ->  ${HOME}/dotfiles/bashrc
-${HOME}/.dotfiles_settings  ->  ${HOME}/dotfiles/dotfiles_settings
-${HOME}/.inputrc            ->  ${HOME}/dotfiles/inputrc
-${HOME}/.kshrc              ->  ${HOME}/dotfiles/kshrc
-${HOME}/.lynxrc             ->  ${HOME}/dotfiles/lynxrc
-${HOME}/.newsboat.d         ->  ${HOME}/dotfiles/newsboat.d
-${HOME}/.profile            ->  ${HOME}/dotfiles/profile
-${HOME}/.scripts            ->  ${HOME}/dotfiles/scripts
-${HOME}/.shellrc            ->  ${HOME}/dotfiles/shellrc
-${HOME}/.shellrc.d          ->  ${HOME}/dotfiles/shellrc.d
-${HOME}/.zprofile           ->  ${HOME}/dotfiles/zprofile
-${HOME}/.zshrc              ->  ${HOME}/dotfiles/zshrc
-```
+
+### Testing
 
 One can execute the following before and after the [usage](#usage) steps to compare:
 
 ```sh
-find "${HOME}" -maxdepth 1 -type l -exec ls -l {} \; | awk '{print $9 " " $10 " " $11}' | sed 's|'"${HOME}"'|${HOME}|g' | sort | column -t
+find "${HOME}" -type l -exec file {} \; | grep -E "to[[:space:]]+'${HOME}/dotfiles/" | sort | column -t
 ```
 
 ## Usage
@@ -58,9 +56,8 @@ find "${HOME}" -maxdepth 1 -type l -exec ls -l {} \; | awk '{print $9 " " $10 " 
            fi
        fi
        ```
-1. Clone this repo as `"${HOME}/dotfiles"` and `cd` into it.
-1. (__!!!DESTRUCTIVE!!!__) Create required symlinks, overwritting pre-existing files and directories where necessary: `./scripts/setup.sh`
-1. Exit current shell, as instructed.
-1. In a new, interactive shell, execute again to finish setup: `./scripts/setup.sh`
-1. For future invocations, one can execute: `~/.scripts/setup.sh`
+
+1. Clone this repo as `"${HOME}"/dotfiles` and `cd` into it.
+1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding executables (and their libraries): `./install.sh`
+1. Leaving the current shell running, open a new one and test things out
 

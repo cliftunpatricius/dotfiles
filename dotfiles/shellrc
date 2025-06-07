@@ -4,8 +4,8 @@
 # Source Libraries
 #
 
-# shellcheck source=scripts/_lib.sh
-. .scripts/_lib.sh
+# shellcheck source=lib/_lib.sh
+. "${HOME}"/lib/_lib.sh
 
 #
 # Platform-specific Configurations
@@ -14,20 +14,20 @@
 # Source paths are hardcoded so that shellcheck can follow them
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
-	# shellcheck source=dotfiles/shellrc.d/openbsd
-	. .shellrc.d/openbsd
+	# shellcheck source=dotfiles_OpenBSD/shellrc_OpenBSD
+	. "${HOME}"/.shellrc_OpenBSD
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
-	# shellcheck source=dotfiles/shellrc.d/freebsd
-	. .shellrc.d/freebsd
+	# shellcheck source=dotfiles_FreeBSD/shellrc_FreeBSD
+	. "${HOME}"/.shellrc_FreeBSD
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
-	# shellcheck source=dotfiles/shellrc.d/linux
-	. .shellrc.d/linux
+	# shellcheck source=dotfiles_Linux/shellrc_Linux
+	. "${HOME}"/.shellrc_Linux
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
-	# shellcheck source=dotfiles/shellrc.d/darwin
-	. .shellrc.d/darwin
+	# shellcheck source=dotfiles_Darwin/shellrc_Darwin
+	. "${HOME}"/.shellrc_Darwin
 fi
 
 #
