@@ -1,0 +1,10 @@
+LANG=C
+
+#include <calendar.fictional>
+#include <calendar.computer>
+#include <calendar.space>
+#include <calendar.openbsd>
+#include <calendar.usholiday>
+#include <calendar.ushistory>
+#include <calendar.christian>
+

@@ -1,0 +1,23 @@
+# Inherit current selected group
+sticky	yes
+
+# Snap windows to edge of screen with a 4-pixel buffer
+snapdist 4
+
+fontname "spleen:pixelsize=24:antialias=false"
+
+# Application menu
+command firefox firefox
+command xterm xterm
+
+# KEYBINDINGS:
+# 4 = mod (windows key)
+# S = shift
+# C = control
+# M = meta (alt)
+
+# Override new terminal binding with preferred settings
+bind-key CM-Return	"xterm -bg black -fg grey +sb"
+bind-key CMS-w		openbsd-wallpaper
+bind-key CM-b		firefox
+

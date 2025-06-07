@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# shellcheck source=dotfiles/shellrc
+. .shellrc
+

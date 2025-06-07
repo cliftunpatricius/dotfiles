@@ -1,45 +1,54 @@
 # dotfiles
 
+* [Introduction](#introduction)
+* [Features](#features)
+* [Linting](#linting)
+* [Testing](#testing)
+* [Usage](#usage)
+* [Acknowledgements](#acknowledgements)
+
+## Introduction
+
 It was the best of terminals, it was the worst of terminals...
 
 My own digital ramblings about a sane CLI experience across various platforms (oh, and that thing they call a GUI as well...).
 
+I work to replicate my preferred, fairly-vanilla OpenBSD workflow on other platforms.
+
 ## Features
 
-* dot files
-* preferred packages and corresponding configurations (`ssh`, `newsboat`, etc.)
-* preferred os-specific customizations
-* automatic downloading of other repositories, when a `~/code/.my_repos` file is present
-* some portions can be customized by editting existing values in the `dotfiles_settings` file
+Cross-platform (Mostly. You know how that goes...):
+* dotfiles
 * `vi` mode, `vi` mode, `vi` mode
+* keyboard re-mapping of Caps_Lock to Control
+* `tmux` with custom status bar and vi-like bindings
+* `spleen` font
+* packages and configurations
+* cloning of other repositories, given a `~/code/.my_repos`
 
-### Symlinks created in `"${HOME}"`:
+OpenBSD
+* CWM
+* _fancy_ use of `xlock`,`xidle`, `xcetera...`
 
+## Linting
+
+From the root directory of this repository, execute:
+
+```sh
+grep -ril '^#!/bin/sh' . | grep -Ev '^\./\.git' | xargs shellcheck -ax
 ```
-${HOME}/.bash_profile       ->  ${HOME}/dotfiles/bash_profile
-${HOME}/.bashrc             ->  ${HOME}/dotfiles/bashrc
-${HOME}/.dotfiles_settings  ->  ${HOME}/dotfiles/dotfiles_settings
-${HOME}/.inputrc            ->  ${HOME}/dotfiles/inputrc
-${HOME}/.kshrc              ->  ${HOME}/dotfiles/kshrc
-${HOME}/.lynxrc             ->  ${HOME}/dotfiles/lynxrc
-${HOME}/.newsboat.d         ->  ${HOME}/dotfiles/newsboat.d
-${HOME}/.profile            ->  ${HOME}/dotfiles/profile
-${HOME}/.scripts            ->  ${HOME}/dotfiles/scripts
-${HOME}/.shellrc            ->  ${HOME}/dotfiles/shellrc
-${HOME}/.shellrc.d          ->  ${HOME}/dotfiles/shellrc.d
-${HOME}/.zprofile           ->  ${HOME}/dotfiles/zprofile
-${HOME}/.zshrc              ->  ${HOME}/dotfiles/zshrc
-```
+
+## Testing
 
 One can execute the following before and after the [usage](#usage) steps to compare:
 
 ```sh
-find "${HOME}" -maxdepth 1 -type l -exec ls -l {} \; | awk '{print $9 " " $10 " " $11}' | sed 's|'"${HOME}"'|${HOME}|g' | sort | column -t
+find "${HOME}" -type l -exec file {} \; | grep -E "to[[:space:]]+'${HOME}/dotfiles/" | sort | column -t
 ```
 
 ## Usage
 
-1. Install `git`.
+1. Install `git`
      * `macOS` is a special scenario:
 
        ```sh
@@ -58,9 +67,22 @@ find "${HOME}" -maxdepth 1 -type l -exec ls -l {} \; | awk '{print $9 " " $10 " 
            fi
        fi
        ```
-1. Clone this repo as `"${HOME}/dotfiles"` and `cd` into it.
-1. (__!!!DESTRUCTIVE!!!__) Create required symlinks, overwritting pre-existing files and directories where necessary: `./scripts/setup.sh`
-1. Exit current shell, as instructed.
-1. In a new, interactive shell, execute again to finish setup: `./scripts/setup.sh`
-1. For future invocations, one can execute: `~/.scripts/setup.sh`
+
+1. Install `shellcheck` for linting the shell scripts
+1. Clone this repo as `"${HOME}"/dotfiles` and `cd` into it
+1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding executables (and their libraries): `./install.sh`
+1. Leaving the current shell running, open a new one and test things out
+
+## Acknowledgements
+
+Beyond official documentation, I have been greatly inspired by the example of others.
+
+While I have chosen to go even more "vanilla" than the excellent examples below,
+allow me to give honor where honor is due:
+* https://missing.csail.mit.edu/
+* https://www.c0ffee.net/blog/openbsd-on-a-laptop/
+* [ThePrimeagen's workstation setup tutorial](https://frontendmasters.com/courses/developer-productivity-v2/bash-environment-setup-script/) (I have only watched the free preview), [ThePrimeagen](https://www.youtube.com/@ThePrimeagen), [ThePrimeTimeagen](https://www.youtube.com/@ThePrimeTimeagen)
+
+Potential sources of future inspiration:
+* https://linkarzu.com/posts/macos/prime-workflow/
 

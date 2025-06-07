@@ -1,0 +1,29 @@
+#!/bin/sh
+
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+export ENV="${HOME}/.kshrc"
+
+# No bell
+xset b 0 0 0
+
+# "Include" config from .xresources
+xrdb -merge "${HOME}"/.xresources
+
+# Per config in .xresources, xidle
+# will eventually lock the screen
+xidle &
+
+# Set Caps_Lock to be another Escape
+setxkbmap -option caps:ctrl_modifier
+
+# Wallpaper randomization process
+command -v openbsd-wallpaper \
+	> /dev/null 2> /dev/null \
+	&& openbsd-wallpaper &
+
+# Launch the built-in CWM window manager
+command -v cwm \
+	> /dev/null 2> /dev/null \
+	&& exec cwm
+

@@ -1,0 +1,8 @@
+! Lock after 5 minutes idle
+XIdle*timeout	: 300
+
+! Turn off backlight when locked
+XLock.dpmsoff	: 1
+XLock.echokeys	: off
+
+*faceName: spleen:pixelsize=24:antialias=false
