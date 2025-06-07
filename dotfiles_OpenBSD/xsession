@@ -15,7 +15,7 @@ xrdb -merge "${HOME}"/.xresources
 xidle &
 
 # Set Caps_Lock to be another Escape
-setxkbmap -option caps:escape
+setxkbmap -option caps:ctrl_modifier
 
 # Wallpaper randomization process
 command -v openbsd-wallpaper \

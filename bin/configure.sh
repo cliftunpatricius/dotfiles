@@ -38,20 +38,10 @@ env | grep -Eq '^ME_(ARCHITECTURE|CONTEXT|OPERATING_SYSTEM)=' || {
 
 usage() {
 	echo "Usage
-	${0} [-d|-f|-g|-h|-m|-r]
+	${0} [-h]
 
 Parameters
-	-d	Configures a DNS server on this machine
-
-	-f	Configures a file server on this machine
-
-	-g	Installs a GUI on this machine
-
-	-h	Print this usage and exit
-
-	-m	Configures a media server on this machine
-
-	-r	Configures a router on this machine"
+	-h	Print this usage and exit"
 }
 
 #
@@ -59,29 +49,13 @@ Parameters
 #
 
 # Defaults
-ME_IS_DNS_SERVER="false"
-ME_IS_FILE_SERVER="false"
-ME_IS_MEDIA_SERVER="false"
-ME_IS_ROUTER="false"
-ME_HAS_GUI="false"
 
-while getopts 'dfghmr' OPTION
+while getopts 'h' OPTION
 do
 	case "${OPTION}" in
-		d)
-			export ME_IS_DNS_SERVER="true"
-			;;
-		f)
-			export ME_IS_FILE_SERVER="true"
-			;;
-		g)
-			export ME_HAS_GUI="true"
-			;;
-		m)
-			export ME_IS_MEDIA_SERVER="true"
-			;;
-		r)
-			export ME_IS_ROUTER="true"
+		h)
+			usage
+			exit
 			;;
 		?)
 			usage >&2
@@ -107,20 +81,19 @@ _shell=""
 
 if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
 then
-	# shellcheck source=bin_OpenBSD/configure_OpenBSD.sh
-	. "${HOME}"/bin_OpenBSD/configure_OpenBSD.sh
+	"${HOME}"/bin/configure_OpenBSD.sh
 elif test "${ME_OPERATING_SYSTEM}" = "FreeBSD"
 then
 	# shellcheck source=bin_FreeBSD/configure_FreeBSD.sh
-	. "${HOME}"/bin_FreeBSD/configure_FreeBSD.sh
+	. "${HOME}"/bin/configure_FreeBSD.sh
 elif test "${ME_OPERATING_SYSTEM}" = "Linux"
 then
 	# shellcheck source=bin_Linux/configure_Linux.sh
-	. "${HOME}"/bin_Linux/configure_Linux.sh
+	. "${HOME}"/bin/configure_Linux.sh
 elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
 	# shellcheck source=bin_Darwin/configure_Darwin.sh
-	. "${HOME}"/bin_Darwin/configure_Darwin.sh
+	. "${HOME}"/bin/configure_Darwin.sh
 fi
 
 # Set shell.

@@ -5,6 +5,7 @@
 * [Linting](#linting)
 * [Testing](#testing)
 * [Usage](#usage)
+* [Acknowledgements](#acknowledgements)
 
 ## Introduction
 
@@ -19,8 +20,8 @@ I work to replicate my preferred, fairly-vanilla OpenBSD workflow on other platf
 Cross-platform (Mostly. You know how that goes...):
 * dotfiles
 * `vi` mode, `vi` mode, `vi` mode
-* keyboard re-mapping of Caps_Lock to Escape
-* `tmux` with custom status bar
+* keyboard re-mapping of Caps_Lock to Control
+* `tmux` with custom status bar and vi-like bindings
 * `spleen` font
 * packages and configurations
 * cloning of other repositories, given a `~/code/.my_repos`
@@ -71,4 +72,17 @@ find "${HOME}" -type l -exec file {} \; | grep -E "to[[:space:]]+'${HOME}/dotfil
 1. Clone this repo as `"${HOME}"/dotfiles` and `cd` into it
 1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding executables (and their libraries): `./install.sh`
 1. Leaving the current shell running, open a new one and test things out
+
+## Acknowledgements
+
+Beyond official documentation, I have been greatly inspired by the example of others.
+
+While I have chosen to go even more "vanilla" than the excellent examples below,
+allow me to give honor where honor is due:
+* https://missing.csail.mit.edu/
+* https://www.c0ffee.net/blog/openbsd-on-a-laptop/
+* [ThePrimeagen's workstation setup tutorial](https://frontendmasters.com/courses/developer-productivity-v2/bash-environment-setup-script/) (I have only watched the free preview), [ThePrimeagen](https://www.youtube.com/@ThePrimeagen), [ThePrimeTimeagen](https://www.youtube.com/@ThePrimeTimeagen)
+
+Potential sources of future inspiration:
+* https://linkarzu.com/posts/macos/prime-workflow/
 
