@@ -27,7 +27,7 @@ From the root directory of this repository, execute:
 grep -ril '^#!/bin/sh' | grep -Ev '^\.git' | xargs shellcheck -ax
 ```
 
-### Testing
+## Testing
 
 One can execute the following before and after the [usage](#usage) steps to compare:
 
