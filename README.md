@@ -12,13 +12,22 @@ It was the best of terminals, it was the worst of terminals...
 
 My own digital ramblings about a sane CLI experience across various platforms (oh, and that thing they call a GUI as well...).
 
+I work to replicate my preferred, fairly-vanilla OpenBSD workflow on other platforms.
+
 ## Features
 
-* dot files
-* preferred packages and corresponding configurations (`ssh`, `newsboat`, etc.)
-* preferred os-specific customizations
-* automatic downloading of other repositories, when a `~/code/.my_repos` file is present
+Cross-platform (Mostly. You know how that goes...):
+* dotfiles
 * `vi` mode, `vi` mode, `vi` mode
+* keyboard re-mapping of Caps_Lock to Escape
+* `tmux` with custom status bar
+* `spleen` font
+* packages and configurations
+* cloning of other repositories, given a `~/code/.my_repos`
+
+OpenBSD
+* CWM
+* _fancy_ use of `xlock`,`xidle`, `xcetera...`
 
 ## Linting
 
@@ -38,7 +47,7 @@ find "${HOME}" -type l -exec file {} \; | grep -E "to[[:space:]]+'${HOME}/dotfil
 
 ## Usage
 
-1. Install `git`.
+1. Install `git`
      * `macOS` is a special scenario:
 
        ```sh
@@ -58,7 +67,8 @@ find "${HOME}" -type l -exec file {} \; | grep -E "to[[:space:]]+'${HOME}/dotfil
        fi
        ```
 
-1. Clone this repo as `"${HOME}"/dotfiles` and `cd` into it.
+1. Install `shellcheck` for linting the shell scripts
+1. Clone this repo as `"${HOME}"/dotfiles` and `cd` into it
 1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding executables (and their libraries): `./install.sh`
 1. Leaving the current shell running, open a new one and test things out
 
