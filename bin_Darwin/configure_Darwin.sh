@@ -49,14 +49,15 @@ readonly mac_computername
 if test "${mac_hostname}" != "${mac_computername}"
 then
 	sudo scutil --set HostName "${mac_computername}"
-	print_notice_message "macOS \`HostName\` set to ${mac_computername}"
 fi
 
 if ! test -f ~/Library/LaunchAgents/com.ldaws.CapslockEscape.plist
 then
 	# https://developer.apple.com/library/archive/technotes/tn2450/_index.html#//apple_ref/doc/uid/DTS40017618-CH1-KEY_TABLE_USAGES
 	readonly caps_lock_code="0x700000039"
+	# shellcheck disable=SC2034
 	readonly escape_code="0x700000029"
+	# shellcheck disable=SC2034
 	readonly left_control_code="0x7000000E0"
 
 	# Map Caps Lock to something else
@@ -367,5 +368,11 @@ then
 	. "${HOME}"/bin/configure_unbound.sh
 fi
 
-print_notice_message "May need to manually configure: lock screen immediately after display is off, set keyboard to ABC - Extended, trackpad tapping, trackpad speed, 24-hour clock in both user and boot screens, show bluetooth icon in menu bar, etc."
+printf 'The following configurations are not handled by this script:\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+'- lock screen immediately after display is off' \
+'- 24-hour clock in both user and boot screens' \
+'- trackpad tapping' \
+'- trackpad speed' \
+'- set keyboard to ABC - Extended' \
+'- show bluetooth icon in menu bar'
 
