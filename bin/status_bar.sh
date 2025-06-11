@@ -32,8 +32,11 @@ battery_charging_indicator="$(sysctl hw.sensors.acpiac0.indicator0 | grep -c On)
 if test "${battery_charging_indicator}" -eq "1"
 then
 	battery_charging_comment="Charging"
-else
+elif test "${battery_charging_indicator}" -eq "0"
+then
 	battery_charging_comment="Draining"
+else
+	battery_charging_comment="Unknown"
 fi
 
 readonly cpu_temp cpu_speed \
