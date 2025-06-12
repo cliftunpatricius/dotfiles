@@ -22,6 +22,9 @@ command -v openbsd-wallpaper \
 	> /dev/null 2> /dev/null \
 	&& openbsd-wallpaper &
 
+# Start ssh-agent as needed
+test -z "${SSH_AGENT_PID}" && eval `ssh-agent -s`
+
 # Launch the built-in CWM window manager
 command -v cwm \
 	> /dev/null 2> /dev/null \
