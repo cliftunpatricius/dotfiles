@@ -7,3 +7,10 @@ XLock.echokeys	: off
 
 *faceName: spleen:pixelsize=24:antialias=false
 
+XTerm*background	: black
+XTerm*foreground	: grey
+XTerm*fullscreen	: always
+XTerm*borderWidth	: 0
+XTerm*internalBorder	: 2
+XTerm*vt100.scrollBar	: false
+
