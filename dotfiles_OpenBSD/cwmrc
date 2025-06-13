@@ -16,8 +16,6 @@ command xterm xterm
 # C = control
 # M = meta (alt)
 
-# Override new terminal binding with preferred settings
-bind-key CM-Return	"xterm -bg black -fg grey +sb"
 bind-key CMS-w		openbsd-wallpaper
 bind-key CM-b		firefox
 
