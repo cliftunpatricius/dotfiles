@@ -26,17 +26,34 @@ cpu_speed="$(sysctl hw.cpuspeed | awk -F '=' '{print $2}')"
 
 mem_free="$(top -n | grep Memory | awk '{print $6}')"
 
-battery_percentage_remaining="$(apm -l)"
-battery_charging_indicator="$(sysctl hw.sensors.acpiac0.indicator0 | grep -c On)"
+if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
+then
+	battery_percentage_remaining="$(apm -l)"
+	battery_charging_indicator="$(sysctl hw.sensors.acpiac0.indicator0 | grep -c On)"
 
-if test "${battery_charging_indicator}" -eq "1"
+	if test "${battery_charging_indicator}" -eq "1"
+	then
+		battery_charging_comment="Charging"
+	elif test "${battery_charging_indicator}" -eq "0"
+	then
+		battery_charging_comment="Draining"
+	else
+		battery_charging_comment="Unknown"
+	fi
+elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
-	battery_charging_comment="Charging"
-elif test "${battery_charging_indicator}" -eq "0"
-then
-	battery_charging_comment="Draining"
-else
-	battery_charging_comment="Unknown"
+	battery_percentage_remaining="$(ioreg -c AppleSmartBattery | grep '"CurrentCapacity"' | awk -F ' = ' '{print $2}')"
+	battery_charging_indicator="$(ioreg -c AppleSmartBattery | grep '"ChargerConfiguration"' | awk -F ' = ' '{print $2}')"
+
+	if test "${battery_charging_indicator}" -gt "0"
+	then
+		battery_charging_comment="Charging"
+	elif test "${battery_charging_indicator}" -eq "0"
+	then
+		battery_charging_comment="Draining"
+	else
+		battery_charging_comment="Unknown"
+	fi
 fi
 
 readonly cpu_temp cpu_speed \
