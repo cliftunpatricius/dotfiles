@@ -50,3 +50,28 @@ cmp -s /etc/wsconsctl.conf "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" || {
 	doas cp "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" /etc/wsconsctl.conf
 }
 
+#
+# Packages
+#
+
+readonly packages="abcde
+chromium
+curl
+flac
+ffmpeg
+firefox
+frotz
+git
+lynx
+newsboat
+openbsd-backgrounds
+shellcheck
+spleen
+tree
+vorbis-tools
+wireguard-tools
+yt-dlp"
+
+# shellcheck disable=SC2046
+doas pkg_add $(printf '%s' "${packages}" | tr '\n' ' ')
+
