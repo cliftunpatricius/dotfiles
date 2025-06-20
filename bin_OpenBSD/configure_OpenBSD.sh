@@ -69,6 +69,7 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 
 readonly packages="abcde
 chromium
+clamav
 curl
 flac
 ffmpeg
@@ -88,3 +89,8 @@ yt-dlp"
 # shellcheck disable=SC2046
 doas pkg_add $(printf '%s' "${packages}" | tr '\n' ' ')
 
+#
+# ClamAV
+#
+
+# To-do: configure clamav to auto-update
