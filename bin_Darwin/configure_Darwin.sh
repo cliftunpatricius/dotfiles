@@ -137,6 +137,7 @@ then
 		act
 		awscli
 		azure-cli
+		frotz
 		go
 		hadolint
 		hashicorp/tap/terraform
