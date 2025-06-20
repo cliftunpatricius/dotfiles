@@ -19,8 +19,9 @@ test -d /etc/apm || doas mkdir /etc/apm
 test -f /etc/apm/suspend || doas touch /etc/apm/suspend
 
 cmp -s /etc/apm/suspend "${HOME}/dotfiles/config_OpenBSD/suspend" || {
-	doas cp "${HOME}/dotfiles/config_OpenBSD/suspend" /etc/apm/suspend
-	doas chmod +x /etc/apm/suspend
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/suspend" /etc/apm/suspend
+	doas chown root:wheel /etc/apm/suspend
+	doas chmod 750 /etc/apm/suspend
 }
 
 # Suspend if battery is at or below 15% charge
@@ -47,7 +48,19 @@ fi
 #
 
 cmp -s /etc/wsconsctl.conf "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" || {
-	doas cp "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" /etc/wsconsctl.conf
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" /etc/wsconsctl.conf
+	doas chown root:wheel /etc/wsconsctl.conf
+	doas chmod 644 /etc/wsconsctl.conf
+}
+
+#
+# sysctl
+#
+
+cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" /etc/sysctl.conf
+	doas chown root:wheel /etc/sysctl.conf
+	doas chmod 644 /etc/sysctl.conf
 }
 
 #
