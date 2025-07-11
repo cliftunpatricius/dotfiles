@@ -77,6 +77,7 @@ firefox
 frotz
 git
 lynx
+mplayer
 newsboat
 openbsd-backgrounds
 shellcheck
