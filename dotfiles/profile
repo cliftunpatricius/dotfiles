@@ -120,7 +120,7 @@ fi
 # Calendar
 #
 
-if command -v calendar > /dev/null 2> /dev/null 
+if command -v calendar > /dev/null 2> /dev/null
 then
 	calendar
 fi
