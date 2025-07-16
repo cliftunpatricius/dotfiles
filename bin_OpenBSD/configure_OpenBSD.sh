@@ -78,8 +78,10 @@ frotz
 git
 lynx
 mplayer
+mupdf
 newsboat
 openbsd-backgrounds
+pdftk
 shellcheck
 spleen
 tree
