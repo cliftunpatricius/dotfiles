@@ -67,6 +67,8 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 # Packages
 #
 
+### Standard Packages
+
 readonly packages="abcde
 chromium
 clamav
@@ -80,6 +82,7 @@ lynx
 mplayer
 mupdf
 newsboat
+opam
 openbsd-backgrounds
 pdftk
 shellcheck
@@ -91,6 +94,19 @@ yt-dlp"
 
 # shellcheck disable=SC2046
 doas pkg_add $(printf '%s' "${packages}" | tr '\n' ' ')
+
+### OCaml Source-based Packages
+
+readonly opam_packages="cpdf"
+
+if test -z "$(command -v cpdf 2> /dev/null)"
+then
+	# Add an ~/.opamrc and possibly avoid init?
+	opam init
+fi
+
+# shellcheck disable=SC2046
+opam install $(printf '%s' "${opam_packages}" | tr '\n' ' ')
 
 #
 # ClamAV

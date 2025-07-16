@@ -4,7 +4,7 @@
 # Universal
 #
 
-PATH="${HOME}/bin:${PATH}"
+PATH="${HOME}/bin:${HOME}/.opam/default/bin:${PATH}"
 export PATH
 
 ME_ARCHITECTURE="$(uname -m)"
@@ -106,10 +106,22 @@ GPG_TTY="$(tty)"
 export GPG_TTY
 
 #
+# opam (OCaml source-based package manager)
+# For installing cpdf. Would like to avoid, though.
+#
+
+if command -v opam > /dev/null 2> /dev/null
+then
+	# Do not allow to customize PATH. That is done above.
+	eval "$(opam env --switch=default | grep -Ev '^PATH=')"
+fi
+
+#
 # Calendar
 #
 
-command -v calendar \
-	> /dev/null 2> /dev/null \
-	&& calendar
+if command -v calendar > /dev/null 2> /dev/null 
+then
+	calendar
+fi
 
