@@ -72,6 +72,7 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 readonly packages="abcde
 chromium
 clamav
+cmus
 curl
 flac
 ffmpeg
