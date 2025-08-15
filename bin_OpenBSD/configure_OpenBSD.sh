@@ -81,13 +81,14 @@ frotz
 git
 lynx
 mplayer
-mupdf
+mupdf--
 newsboat
 opam
 openbsd-backgrounds
 pdftk
 shellcheck
 spleen
+stellarium
 tree
 vorbis-tools
 wireguard-tools
@@ -106,6 +107,11 @@ then
 	opam init
 fi
 
+# Update present packages
+opam update
+opam upgrade -y
+
+# Install whatever may be new this round
 # shellcheck disable=SC2046
 opam install $(printf '%s' "${opam_packages}" | tr '\n' ' ')
 
