@@ -18,6 +18,6 @@ command xterm xterm
 
 bind-key CMS-w		openbsd-wallpaper
 bind-key CM-b		firefox
-bind-key CM-l		chrome app.logos.com
+bind-key CM-l		ungoogled-chromium app.logos.com
 bind-key CM-s		stellarium
 

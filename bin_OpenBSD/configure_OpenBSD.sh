@@ -70,7 +70,6 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 ### Standard Packages
 
 readonly packages="abcde
-chromium
 clamav
 cmus
 curl
@@ -90,6 +89,7 @@ shellcheck
 spleen
 stellarium
 tree
+ungoogled-chromium
 vorbis-tools
 wireguard-tools
 yt-dlp"
