@@ -76,6 +76,7 @@ curl
 flac
 ffmpeg
 firefox
+flashrom
 frotz
 git
 lynx
