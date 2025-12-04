@@ -21,7 +21,7 @@ Cross-platform (Mostly. You know how that goes...):
 * dotfiles
 * `vi` mode, `vi` mode, `vi` mode
 * keyboard re-mapping of Caps_Lock to Control
-* `tmux` with custom status bar and vi-like bindings
+* `tmux` with custom status bar and `vi`-like bindings
 * `spleen` font
 * packages and configurations
 * cloning of other repositories, given a `~/code/.my_repos`
