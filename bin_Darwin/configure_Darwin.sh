@@ -302,7 +302,8 @@ else
 		mas install "${tailscale_app_id}"
 	else
 		# Keep it up-to-date
-		mas upgrade Tailscale
+		tailscale_app_id="$(mas list | grep -E '[[:digit:]]+[[:space:]]+Tailscale[[:space:]]+\(' | awk '{print $1;}')"
+		mas upgrade "${tailscale_app_id}"
 	fi
 fi
 fi
