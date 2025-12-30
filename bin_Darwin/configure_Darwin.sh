@@ -381,5 +381,5 @@ printf 'The following configurations are not handled by this script:\n%s\n%s\n%s
 
 if test ! -d "/Applications/Legentibus.app/"
 then
-	printf 'Download Legentibus: https://legentibus.com/download/"
+	printf 'Download Legentibus: https://legentibus.com/download/\n'
 fi
