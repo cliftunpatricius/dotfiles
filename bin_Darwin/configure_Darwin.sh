@@ -168,6 +168,7 @@ brew_casks="firefox
 if test "${ME_CONTEXT}" = "personal"
 then
 	brew_casks="${brew_casks}
+		logos
 		proton-pass"
 elif test "${ME_CONTEXT}" = "work"
 then
@@ -378,3 +379,7 @@ printf 'The following configurations are not handled by this script:\n%s\n%s\n%s
 '- set keyboard to ABC - Extended' \
 '- show bluetooth icon in menu bar'
 
+if test ! -d "/Applications/Legentibus.app/"
+then
+	printf 'Download Legentibus: https://legentibus.com/download/\n'
+fi
