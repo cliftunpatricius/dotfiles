@@ -163,6 +163,7 @@ readonly _shell="${HOMEBREW_PREFIX}/bin/oksh"
 # Install GUI packages.
 brew_casks="firefox
 	font-spleen
+	ungoogled-chromium
 	utm"
 
 if test "${ME_CONTEXT}" = "personal"
