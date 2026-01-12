@@ -131,7 +131,7 @@ then
 		unbound"
 elif test "${ME_CONTEXT}" = "work"
 then
-	brew tap hashicorp/tap
+	brew tap -q hashicorp/tap
 
 	brew_formulae="${brew_formulae}
 		act
@@ -149,7 +149,7 @@ fi
 readonly brew_formulae
 
 # shellcheck disable=SC2086
-brew install ${brew_formulae}
+brew install -q ${brew_formulae}
 
 # Add Homebrew-installed shells to the list of allowed user shells for `chpass`
 grep -q "${HOMEBREW_PREFIX}/bin/bash" /etc/shells || echo "${HOMEBREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells
@@ -188,7 +188,7 @@ fi
 readonly brew_casks
 
 # shellcheck disable=SC2086
-brew install --cask ${brew_casks}
+brew install -q --cask ${brew_casks}
 
 if test "${ME_CONTEXT}" = "work" -a -n "${GEM_VERSION}"
 then
@@ -268,7 +268,7 @@ if test "${_homebrew_tailscale}" = "true"
 then
 	readonly tailscale_dns="100.100.100.100"
 
-	brew install tailscale
+	brew install -q tailscale
 
 	if tailscale status 2>&1 | grep -q '^failed to connect'
 	then
@@ -293,7 +293,7 @@ then
 
 	#tailscale set
 else
-	brew list | grep -q tailscale && brew remove tailscale
+	brew list | grep -q tailscale && brew remove -q tailscale
 	command -v tailscaled > /dev/null 2> /dev/null && sudo tailscaled uninstall-system-daemon
 
 	if ! test -f /Applications/Tailscale.app/Contents/MacOS/Tailscale
@@ -372,15 +372,11 @@ then
 	. "${HOME}"/bin/configure_unbound.sh
 fi
 
-printf 'The following configurations are not handled by this script:\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+printf 'The following configurations are not handled by this script:\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
 '- lock screen immediately after display is off' \
 '- 24-hour clock in both user and boot screens' \
 '- trackpad tapping' \
 '- trackpad speed' \
 '- set keyboard to ABC - Extended' \
-'- show bluetooth icon in menu bar'
-
-if test ! -d "/Applications/Legentibus.app/"
-then
-	printf 'Download Legentibus: https://legentibus.com/download/\n'
-fi
+'- show bluetooth icon in menu bar' \
+'- Legentibus installation: https://legentibus.com/download/'
