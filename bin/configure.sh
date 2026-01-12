@@ -123,7 +123,6 @@ then
 		repo_url="$(printf '%s' "${url}" | awk -F ';' '{print $1;}')"
 		repo_org="$(printf '%s' "${repo_url}" | awk -F ':' '{print $2;}' | awk -F '/' '{print $1;}')"
 		repo_name="$(printf '%s' "${repo_url}" | awk -F '/' '{print $2;}' | sed 's/\.git$//')"
-		upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
 
 		test -d "${HOME}/code/${repo_org}" || mkdir "${HOME}/code/${repo_org}"
 
@@ -136,13 +135,17 @@ then
 				"${HOME}/code/${repo_org}/${repo_name}"
 		fi
 
-		if test -z "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+		if test "git@github.com" = "${repo_url}"
 		then
-			git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
-		else
-			printf '%s: Already has upstream set to:\n%s\n' \
-				"$(print_green_text "${repo_org}/${repo_name}")" \
-				"$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+			upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
+			if test -z "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+			then
+				git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
+			else
+				printf '%s: Already has upstream set to:\n%s\n' \
+					"$(print_green_text "${repo_org}/${repo_name}")" \
+					"$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
+			fi
 		fi
 	done < "${HOME}/code/.my_repos"
 else
