@@ -9,6 +9,27 @@ set -e
 test "${ME_OPERATING_SYSTEM}" = "OpenBSD" || exit 1
 
 #
+# Configure doas(1) via doas.conf(5)
+#
+
+if test -f /etc/doas.conf
+then
+	doas cmp -s /etc/doas.conf "${HOME}/dotfiles/config_OpenBSD/doas.conf" || {
+		doas cp -a "${HOME}/dotfiles/config_OpenBSD/doas.conf" /tmp/doas.conf
+		doas chmod 600 /tmp/doas.conf
+		doas chown root:wheel /tmp/doas.conf
+		doas cp -a /tmp/doas.conf /etc/doas.conf
+	}
+else
+	printf 'Enter the root user ' >&2
+	su -l root -c "cp -a '${HOME}/dotfiles/config_OpenBSD/doas.conf' /tmp/doas.conf;
+		chmod 600 /tmp/doas.conf;
+		chown root:wheel /tmp/doas.conf;
+		cp -a /tmp/doas.conf /etc/doas.conf"
+fi
+
+
+#
 # Battery
 #
 
