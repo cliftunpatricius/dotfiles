@@ -258,56 +258,68 @@ fi
 
 if test "${ME_CONTEXT}" = "work"
 then
-# As of right now, Tailscale is the _only_ app I have to use from the AppStore. My goal is to use _zero_ apps from the AppStore.
-#
-# I have two issues to still figure out:
-#	1) Manually settings DNS seems to work for Firefox, but _not_ for Terminal.
-#	   After a reboot, even Firefox is not happy until DNS is toggled back and forth, same as here: https://red.applefritter.com/r/Tailscale/comments/1g2tfi8/dns_problem_with_tailscaled_on_startup/
-#	2) When last I tried, setting an exit node does not work and even, at least one time, "crashed" my networking.
-if test "${_homebrew_tailscale}" = "true"
-then
-	readonly tailscale_dns="100.100.100.100"
-
-	brew install -q tailscale
-
-	if tailscale status 2>&1 | grep -q '^failed to connect'
+	# Tailscale is the _only_ app I have to use from the AppStore.
+	# My goal is to use _zero_ apps from the AppStore.
+	#
+	# I have two issues to still figure out:
+	#	1) Manually setting DNS works for Firefox, but not Terminal.
+	#	   After a reboot, even Firefox is not happy until DNS is
+	#          toggled back and forth, same as here:
+	#          https://red.applefritter.com/r/Tailscale/comments/1g2tfi8/dns_problem_with_tailscaled_on_startup/
+	#	2) When last I tried, setting an exit node does not work.
+	#          It even, "crashed" my networking.
+	if test "${_homebrew_tailscale}" = "true"
 	then
-		sudo "${HOMEBREW_PREFIX}"/bin/tailscaled install-system-daemon
-	fi
+		readonly tailscale_dns="100.100.100.100"
 
-	if tailscale status 2>&1 | grep -q '^Logged out'
-	then
-		tailscale login
-	fi
+		brew install -q tailscale
 
-	if tailscale status 2>&1 | grep -q '^Tailscale is stopped'
-	then
-		tailscale up
-	fi
+		if tailscale status 2>&1 | grep -q '^failed to connect'
+		then
+			sudo "${HOMEBREW_PREFIX}"/bin/tailscaled install-system-daemon
+		fi
 
-	#sudo networksetup -listallnetworkservices
-	if test "$(sudo networksetup -getdnsservers Wi-Fi)" != "${tailscale_dns}"
-	then
-		sudo networksetup -setdnsservers Wi-Fi "${tailscale_dns}"
-	fi
+		if tailscale status 2>&1 | grep -q '^Logged out'
+		then
+			tailscale login
+		fi
 
-	#tailscale set
-else
-	brew list | grep -q tailscale && brew remove -q tailscale
-	command -v tailscaled > /dev/null 2> /dev/null && sudo tailscaled uninstall-system-daemon
+		if tailscale status 2>&1 | grep -q '^Tailscale is stopped'
+		then
+			tailscale up
+		fi
 
-	if ! test -f /Applications/Tailscale.app/Contents/MacOS/Tailscale
-	then
-		# Install the _oldest_ version of Tailscale from the AppStore that `mas` sees, because
-		# it seems that the _latest_ one is some sort of pre-release package of sorts.
-		tailscale_app_id="$(mas search Tailscale | grep -E '[[:digit:]]+[[:space:]]+Tailscale[[:space:]]+\(' | sort -V | tail -n 1 | awk '{print $1;}')"
-		mas install "${tailscale_app_id}"
+		#sudo networksetup -listallnetworkservices
+		if test "$(sudo networksetup -getdnsservers Wi-Fi)" != "${tailscale_dns}"
+		then
+			sudo networksetup -setdnsservers Wi-Fi "${tailscale_dns}"
+		fi
+
+		#tailscale set
 	else
-		# Keep it up-to-date
-		tailscale_app_id="$(mas list | grep -E '[[:digit:]]+[[:space:]]+Tailscale[[:space:]]+\(' | awk '{print $1;}')"
-		mas upgrade "${tailscale_app_id}"
+		brew list | grep -q tailscale && brew remove -q tailscale
+		command -v tailscaled >/dev/null 2>/dev/null && sudo tailscaled uninstall-system-daemon
+
+		if ! test -f /Applications/Tailscale.app/Contents/MacOS/Tailscale
+		then
+			# Install the _oldest_ version of Tailscale from the AppStore that `mas` sees, because
+			# it seems that the _latest_ one is some sort of pre-release package of sorts.
+			tailscale_app_id="$(
+				mas search Tailscale |
+					grep -E '[[:digit:]]+[[:space:]]+Tailscale[[:space:]]+\(' |
+					sort -V | tail -n 1 | awk '{print $1;}'
+			)"
+			mas install "${tailscale_app_id}"
+		else
+			# Keep it up-to-date
+			tailscale_app_id="$(
+				mas list |
+				grep -E '[[:digit:]]+[[:space:]]+Tailscale[[:space:]]+\(' |
+				awk '{print $1;}'
+			)"
+			mas upgrade "${tailscale_app_id}"
+		fi
 	fi
-fi
 fi
 
 # Show hidden files in Finder

@@ -128,24 +128,15 @@ then
 
 		if ! test -d "${HOME}/code/${repo_org}/${repo_name}"
 		then
-			git -C "${HOME}/code/${repo_org}" clone "${repo_url}"
-		else
-			printf '%s: Already cloned to %s\n' \
-				"$(print_green_text "${repo_org}/${repo_name}")" \
+			printf '%s -> %s ... ' \
+				"${repo_url}" \
 				"${HOME}/code/${repo_org}/${repo_name}"
-		fi
-
-		if test "git@github.com" = "${repo_url}"
-		then
-			upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
-			if test -z "$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
-			then
-				git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
-			else
-				printf '%s: Already has upstream set to:\n%s\n' \
-					"$(print_green_text "${repo_org}/${repo_name}")" \
-					"$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
-			fi
+			git -C "${HOME}/code/${repo_org}" clone -q "${repo_url}"
+			printf 'done\n'
+		else
+			printf '%s -> %s ok\n' \
+				"${repo_url}" \
+				"${HOME}/code/${repo_org}/${repo_name}"
 		fi
 	done < "${HOME}/code/.my_repos"
 else
@@ -156,7 +147,7 @@ fi
 # Misc. work configurations
 if test "${ME_CONTEXT}" = "work"
 then
-	gh auth status > /dev/null 2> /dev/null || gh auth login
+	#gh auth status > /dev/null 2> /dev/null || gh auth login
 
 	az vm list > /dev/null 2> /dev/null || az login
 
