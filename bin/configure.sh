@@ -147,7 +147,7 @@ fi
 # Misc. work configurations
 if test "${ME_CONTEXT}" = "work"
 then
-	gh auth status > /dev/null 2> /dev/null || gh auth login
+	#gh auth status > /dev/null 2> /dev/null || gh auth login
 
 	az vm list > /dev/null 2> /dev/null || az login
 
