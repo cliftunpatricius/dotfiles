@@ -138,22 +138,6 @@ then
 				"${repo_url}" \
 				"${HOME}/code/${repo_org}/${repo_name}"
 		fi
-
-		if test "git@github.com" = "${repo_url}"
-		then
-			upstream_repo="$(printf '%s' "${url}" | awk -F ';' '{print $2;}')"
-			current_upstream="$(git -C "${HOME}/code/${repo_org}/${repo_name}" remote -v | grep -E '^upstream[[:space:]]')"
-			if test -z "${current_upstream}"
-			then
-				printf '%s <- %s ... ' "${repo_url}" "${upstream_repo}"
-				git -C "${HOME}/code/${repo_org}/${repo_name}" remote add upstream "${upstream_repo}"
-				printf 'done\n'
-			else
-				printf '%s <- %s ok\n' \
-					"${repo_url}" \
-					"${current_upstream}"
-			fi
-		fi
 	done < "${HOME}/code/.my_repos"
 else
 	test -d "${HOME}/code/me" || mkdir "${HOME}/code/me"
