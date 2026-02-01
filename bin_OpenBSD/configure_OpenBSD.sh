@@ -202,13 +202,14 @@ then
 
 	# Update present packages
 	printf 'Updating opam package list ...\n'
-	opam update
+	opam update -q --color=never
 	printf 'Upgrading opam packages ...\n'
-	opam upgrade -y
+	opam upgrade -yq --color=never
 
 	printf 'Installing any missing opam packages ...\n'
 	# shellcheck disable=SC2046
-	opam install $(printf '%s' "${opam_packages}" | tr '\n' ' ')
+	opam install -q --color=never \
+		$(printf '%s' "${opam_packages}" | tr '\n' ' ')
 fi
 
 #
