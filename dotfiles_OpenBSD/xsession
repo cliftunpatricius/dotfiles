@@ -1,10 +1,22 @@
 #!/bin/sh
 
-LANG=en_US.UTF-8
-LC_CTYPE=en_US.UTF-8
-ENV="${HOME}/.kshrc"
-SHELL="/usr/bin/tmux"
-export LANG LC_CTYPE ENV SHELL
+readonly LANG="en_US.UTF-8"
+readonly LC_CTYPE="en_US.UTF-8"
+ENV="${HOME}/.kshrc"; readonly ENV
+readonly SHELL="/usr/bin/tmux"
+ME_NCPU="$(sysctl hw.ncpu | awk -F '=' '{print $2;}')"
+readonly ME_NCPU
+export LANG LC_CTYPE ENV SHELL ME_NCPU
+
+ME_GUI="false"
+test "${ME_NCPU}" -ge "4" && ME_GUI="true"
+readonly ME_GUI
+export ME_GUI
+
+ME_HIGH_PERFORMANCE="false"
+test "${ME_NCPU}" -ge "8" && ME_HIGH_PERFORMANCE="true"
+readonly ME_HIGH_PERFORMANCE
+export ME_HIGH_PERFORMANCE
 
 # No bell
 xset b 0 0 0
@@ -25,10 +37,18 @@ command -v openbsd-wallpaper \
 	&& openbsd-wallpaper &
 
 # Start ssh-agent as needed
-test -z "${SSH_AGENT_PID}" && eval `ssh-agent -s`
+test -z "${SSH_AGENT_PID}" && eval "$(ssh-agent -s)"
 
-# Launch the built-in CWM window manager
-command -v cwm \
-	> /dev/null 2> /dev/null \
-	&& exec cwm
-
+# Conditionally launch the built-in CWM window manager
+if test "true" = "${ME_GUI}"
+then
+	command -v cwm \
+		>/dev/null \
+		2>/dev/null \
+		&& exec cwm
+else
+	command -v xterm \
+		>/dev/null \
+		2>/dev/null \
+		&& exec xterm -maximize
+fi

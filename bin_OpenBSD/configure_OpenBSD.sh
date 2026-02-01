@@ -15,30 +15,39 @@ test "${ME_OPERATING_SYSTEM}" = "OpenBSD" || exit 1
 if test -f /etc/doas.conf
 then
 	doas cmp -s /etc/doas.conf "${HOME}/dotfiles/config_OpenBSD/doas.conf" || {
+		printf 'Updating /etc/doas.conf ... '
 		doas cp -a "${HOME}/dotfiles/config_OpenBSD/doas.conf" /tmp/doas.conf
 		doas chmod 600 /tmp/doas.conf
 		doas chown root:wheel /tmp/doas.conf
 		doas cp -a /tmp/doas.conf /etc/doas.conf
+		printf 'done\n'
 	}
 else
+	printf 'Creating /etc/doas.conf ... '
 	printf 'Enter the root user ' >&2
 	su -l root -c "cp -a '${HOME}/dotfiles/config_OpenBSD/doas.conf' /tmp/doas.conf;
 		chmod 600 /tmp/doas.conf;
 		chown root:wheel /tmp/doas.conf;
 		cp -a /tmp/doas.conf /etc/doas.conf"
+	printf 'done\n'
 fi
 
 #
-# GUI or No
+# X Server (via Xenodm)
+#
+# X server is run (even on "non-GUI" systems) for the following features:
+# - Idle timeout suspend + screen lock
+# - Lid closed suspend + screen lock
+# - Session-wide ssh-add server
 #
 
-if doas rcctl ls on | grep -q '^xenodm$'
+if doas rcctl ls off | grep -q '^xenodm$'
 then
-	ME_GUI="true"
-else
-	ME_GUI="false"
+	printf 'Enabling xenodm ... '
+	doas rcctl enable xenodm
+	printf 'done\n'
+	printf 'Log out and back in (or restart) to start xenodm.\n' >&2
 fi
-export ME_GUI
 
 #
 # Battery
@@ -48,18 +57,32 @@ export ME_GUI
 # this will cause the laptop to first lock and then to
 # suspend when the lid is closed.
 test -d /etc/apm || doas mkdir /etc/apm
-test -f /etc/apm/suspend || doas touch /etc/apm/suspend
+test -f /etc/apm/suspend || {
+	printf 'Touching /etc/apm/suspend ... '
+	doas touch /etc/apm/suspend
+	printf 'done\n'
+}
 
 cmp -s /etc/apm/suspend "${HOME}/dotfiles/config_OpenBSD/suspend" || {
+	printf 'Updating /etc/apm/suspend ... '
 	doas cp -a "${HOME}/dotfiles/config_OpenBSD/suspend" /etc/apm/suspend
 	doas chown root:wheel /etc/apm/suspend
 	doas chmod 750 /etc/apm/suspend
+	printf 'done\n'
 }
 
-# Suspend if battery is at or below 15% charge
+if doas rcctl ls off | grep -q '^apmd$'
+then
+	printf 'Enabling apmd in automatic mode ... '
+	doas rcctl set apmd status on
+	printf 'done\n'
+fi
+
 if test "$(rcctl get apmd flags)" != "-A -z 15"
 then
-	doas rcctl set apmd flags="-A -z 15"
+	printf 'Configuring apmd to suspend when charge <= %s ... ' "15%"
+	doas rcctl set apmd flags -A -z 15
+	printf 'done\n'
 fi
 
 #
@@ -72,7 +95,9 @@ fi
 # least whatever program is outputing audio and possibly `sndiod` as well.
 if test "$(rcctl get sndiod flags)" != "-f rsnd/0 -F rsnd/1"
 then
-	doas rcctl set sndiod flags="-f rsnd/0 -F rsnd/1"
+	printf 'Configuring sndiod to "external" audio if available ... '
+	doas rcctl set sndiod flags -f rsnd/0 -F rsnd/1
+	printf 'done\n'
 fi
 
 #
@@ -80,9 +105,11 @@ fi
 #
 
 cmp -s /etc/wsconsctl.conf "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" || {
+	printf 'Updating /etc/wsconsctl.conf ... '
 	doas cp -a "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" /etc/wsconsctl.conf
 	doas chown root:wheel /etc/wsconsctl.conf
 	doas chmod 644 /etc/wsconsctl.conf
+	printf 'done\n'
 }
 
 #
@@ -90,9 +117,11 @@ cmp -s /etc/wsconsctl.conf "${HOME}/dotfiles/config_OpenBSD/wsconsctl.conf" || {
 #
 
 cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
+	printf 'Updating /etc/sysctl.conf ... '
 	doas cp -a "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" /etc/sysctl.conf
 	doas chown root:wheel /etc/sysctl.conf
 	doas chmod 644 /etc/sysctl.conf
+	printf 'done\n'
 }
 
 #
@@ -101,8 +130,7 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 
 ### Standard Packages
 
-readonly packages="abcde
-clamav
+readonly packages="clamav
 cmus
 curl
 flac
@@ -113,7 +141,6 @@ git
 lynx
 mplayer
 newsboat
-opam
 pdftk
 shellcheck
 spleen
@@ -125,35 +152,64 @@ yt-dlp"
 readonly gui_packages="firefox
 mupdf--
 openbsd-backgrounds
-stellarium
 ungoogled-chromium"
 
+readonly high_performance_packages="abcde
+opam"
+
+readonly high_performance_gui_packages="stellarium"
+
+printf 'Installing/updating packages ...\n'
 # shellcheck disable=SC2046
 doas pkg_add $(printf '%s' "${packages}" | tr '\n' ' ')
 
 if test "true" = "${ME_GUI}"
 then
+	printf 'Installing/updating GUI packages ...\n'
 	# shellcheck disable=SC2046
 	doas pkg_add $(printf '%s' "${gui_packages}" | tr '\n' ' ')
 fi
 
-### OCaml Source-based Packages
-
-readonly opam_packages="cpdf"
-
-if test -z "$(command -v cpdf 2> /dev/null)"
+if test "true" = "${ME_HIGH_PERFORMANCE}"
 then
-	# Add an ~/.opamrc and possibly avoid init?
-	opam init
+	printf 'Installing/updating high performance packages ...\n'
+	# shellcheck disable=SC2046
+	doas pkg_add $(printf '%s' "${high_performance_packages}" | tr '\n' ' ')
 fi
 
-# Update present packages
-opam update
-opam upgrade -y
+if test "true" = "${ME_HIGH_PERFORMANCE}" -a "true" = "${ME_GUI}"
+then
+	printf 'Installing/updating high performance GUI packages ...\n'
+	# shellcheck disable=SC2046
+	doas pkg_add $(
+		printf '%s' "${high_performance_gui_packages}" |
+		tr '\n' ' '
+	)
+fi
 
-# Install whatever may be new this round
-# shellcheck disable=SC2046
-opam install $(printf '%s' "${opam_packages}" | tr '\n' ' ')
+### OCaml Source-based Packages
+
+if command -v opam >/dev/null 2>/dev/null
+then
+	readonly opam_packages="cpdf"
+
+	if test -z "$(command -v cpdf 2> /dev/null)"
+	then
+		printf 'Initializing opam ...\n'
+		# Add an ~/.opamrc and possibly avoid init?
+		opam init
+	fi
+
+	# Update present packages
+	printf 'Updating opam package list ...\n'
+	opam update
+	printf 'Upgrading opam packages ...\n'
+	opam upgrade -y
+
+	printf 'Installing any missing opam packages ...\n'
+	# shellcheck disable=SC2046
+	opam install $(printf '%s' "${opam_packages}" | tr '\n' ' ')
+fi
 
 #
 # ClamAV
