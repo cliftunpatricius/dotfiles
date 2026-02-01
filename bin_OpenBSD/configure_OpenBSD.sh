@@ -28,6 +28,17 @@ else
 		cp -a /tmp/doas.conf /etc/doas.conf"
 fi
 
+#
+# GUI or No
+#
+
+if doas rcctl ls on | grep -q '^xenodm$'
+then
+	ME_GUI="true"
+else
+	ME_GUI="false"
+fi
+export ME_GUI
 
 #
 # Battery
@@ -96,28 +107,35 @@ cmus
 curl
 flac
 ffmpeg
-firefox
 flashrom
 frotz
 git
 lynx
 mplayer
-mupdf--
 newsboat
 opam
-openbsd-backgrounds
 pdftk
 shellcheck
 spleen
-stellarium
 tree
-ungoogled-chromium
 vorbis-tools
 wireguard-tools
 yt-dlp"
 
+readonly gui_packages="firefox
+mupdf--
+openbsd-backgrounds
+stellarium
+ungoogled-chromium"
+
 # shellcheck disable=SC2046
 doas pkg_add $(printf '%s' "${packages}" | tr '\n' ' ')
+
+if test "true" = "${ME_GUI}"
+then
+	# shellcheck disable=SC2046
+	doas pkg_add $(printf '%s' "${gui_packages}" | tr '\n' ' ')
+fi
 
 ### OCaml Source-based Packages
 
