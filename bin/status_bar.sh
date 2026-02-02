@@ -24,8 +24,13 @@ readonly degrees_celsius_symbol percent_symbol
 # Timestamp
 #
 
-timestamp="$(date '+%a %d-%b-%Y %H:%M')"
-uptime="$(uptime | awk -F ',' '{print $1}' | sed -E 's/[[:space:]]+/ /g' | sed -En 's/^.+(up .+)$/\1/p')"
+timestamp="$(date '+%Y%m%d %a %H:%M')"
+uptime="$(
+	uptime |
+	awk -F ',' '{print $1}' |
+	sed -E 's/[[:space:]]+/ /g' |
+	sed -En 's/^.+(up .+)$/\1/p'
+)"
 
 readonly timestamp uptime
 
@@ -34,16 +39,27 @@ readonly timestamp uptime
 #
 
 # Normalize the `sysctl` output to OpenBSD format via `sed`
-cpu_count="$(sysctl hw.ncpu | sed -E 's/:[[:space:]]+/=/g' | awk -F '=' '{print $2}')"
+cpu_count="$(
+	sysctl hw.ncpu |
+	sed -E 's/:[[:space:]]+/=/g' |
+	awk -F '=' '{print $2}'
+)"
 
 if test "${operating_system}" = "OpenBSD"
 then
-	cpu_temp="$(sysctl hw.sensors.cpu0.temp0 | cut -d "=" -f 2 | cut -d " " -f 1)"
+	cpu_temp="$(
+		sysctl hw.sensors.cpu0.temp0 |
+		cut -d "=" -f 2 |
+		cut -d " " -f 1
+	)"
 
 	mem_free="$(top -n | grep Memory | awk '{print $6}')"
 
 	battery_percentage_remaining="$(apm -l)"
-	battery_charging_indicator="$(sysctl hw.sensors.acpiac0.indicator0 | grep -c On)"
+	battery_charging_indicator="$(
+		sysctl hw.sensors.acpiac0.indicator0 |
+		grep -c On
+	)"
 
 	if test "${battery_charging_indicator}" -eq "1"
 	then
@@ -60,8 +76,16 @@ then
 
 	mem_free="$(top -l 1 | grep PhysMem | awk '{print $8}')"
 
-	battery_percentage_remaining="$(ioreg -c AppleSmartBattery | grep '"CurrentCapacity"' | awk -F ' = ' '{print $2}')"
-	battery_charging_indicator="$(ioreg -c AppleSmartBattery | grep '"ChargerConfiguration"' | awk -F ' = ' '{print $2}')"
+	battery_percentage_remaining="$(
+		ioreg -c AppleSmartBattery |
+		grep '"CurrentCapacity"' |
+		awk -F ' = ' '{print $2}'
+	)"
+	battery_charging_indicator="$(
+		ioreg -c AppleSmartBattery |
+		grep '"ChargerConfiguration"' |
+		awk -F ' = ' '{print $2}'
+	)"
 
 	if test "${battery_charging_indicator}" -gt "0"
 	then
@@ -74,9 +98,12 @@ then
 	fi
 fi
 
-readonly cpu_count cpu_temp \
+readonly cpu_count \
+	cpu_temp \
 	mem_free \
-	battery_percentage_remaining battery_charging_indicator battery_charging_comment
+	battery_percentage_remaining \
+	battery_charging_indicator \
+	battery_charging_comment
 
 #
 # Network
@@ -85,15 +112,27 @@ readonly cpu_count cpu_temp \
 if test "${operating_system}" = "OpenBSD"
 then
 	iface="$(route -n show | grep default | awk '{print $8}')"
-	ssid="$(ifconfig "${iface}" | grep join | sed -En 's/^.*join[[:space:]]+([[:alnum:]]+)[[:space:]]+chan.*$/\1/p')"
+	ssid="$(
+		ifconfig "${iface}" |
+		grep join |
+		sed -En 's/^.*join[[:space:]]+([[:alnum:]]+)[[:space:]]+chan.*$/\1/p'
+	)"
 elif test "${operating_system}" = "Darwin"
 then
-	iface="$(route -n get default | grep -E '^[[:space:]]+interface:[[:space:]]+' | awk '{print $2}')"
+	iface="$(
+		route -n get default |
+		grep -E '^[[:space:]]+interface:[[:space:]]+' |
+		awk '{print $2}'
+	)"
 	ssid=""
 fi
 
 public_ip="$(curl -s https://ifconfig.me)"
-private_ip="$(ifconfig "${iface}" | grep -E '^[[:space:]]+inet[[:space:]]+[[:digit:]]+' | awk '{print $2}')"
+private_ip="$(
+	ifconfig "${iface}" |
+	grep -E '^[[:space:]]+inet[[:space:]]+[[:digit:]]+' |
+	awk '{print $2}'
+)"
 
 readonly iface ssid public_ip private_ip
 
@@ -101,12 +140,25 @@ readonly iface ssid public_ip private_ip
 # Status Bar
 #
 
-#printf 'bat: %s (%s) | cpu: %s (%s) | mem: %s | net: %s / %s (%s) | %s (%s)\n' \
-printf '%s (%s) | %s (%s) | %s | %s / %s (%s) | %s | %s\n' \
-	"${battery_percentage_remaining}${percent_symbol}" "${battery_charging_comment}" \
-	"${cpu_count}" "${cpu_temp}${degrees_celsius_symbol}" \
-	"${mem_free}" \
-	"${public_ip}" "${private_ip}" "${ssid}" \
-	"${uptime}" \
-	"${timestamp}"
-
+if test "$(tput cols)" -lt "200"
+then
+	printf '%s (%s) | %s | %s (%s) | %s\n' \
+		"${battery_percentage_remaining}${percent_symbol}" \
+		"${battery_charging_comment}" \
+		"${mem_free}" \
+		"${private_ip}" \
+		"${ssid}" \
+		"${timestamp}"
+else
+	printf '%s (%s) | %s (%s) | %s | %s / %s (%s) | %s | %s\n' \
+		"${battery_percentage_remaining}${percent_symbol}" \
+		"${battery_charging_comment}" \
+		"${cpu_count}" \
+		"${cpu_temp}${degrees_celsius_symbol}" \
+		"${mem_free}" \
+		"${public_ip}" \
+		"${private_ip}" \
+		"${ssid}" \
+		"${uptime}" \
+		"${timestamp}"
+fi
