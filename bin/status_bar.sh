@@ -140,7 +140,8 @@ readonly iface ssid public_ip private_ip
 # Status Bar
 #
 
-if test "$(tput cols)" -lt "150"
+# Let's try the shorter one for a while, so use a huge condition
+if test "$(tput cols)" -lt "1000"
 then
 	printf '%s (%s) | %s | %s (%s) | %s\n' \
 		"${battery_percentage_remaining}${percent_symbol}" \
