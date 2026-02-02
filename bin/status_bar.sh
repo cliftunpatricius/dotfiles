@@ -48,7 +48,8 @@ cpu_count="$(
 if test "${operating_system}" = "OpenBSD"
 then
 	cpu_temp="$(
-		sysctl hw.sensors.cpu0.temp0 |
+		# Ignore error if sensor does not exist
+		sysctl hw.sensors.cpu0.temp0 2>/dev/null |
 		cut -d "=" -f 2 |
 		cut -d " " -f 1
 	)"
@@ -140,8 +141,8 @@ readonly iface ssid public_ip private_ip
 # Status Bar
 #
 
-# Let's try the shorter one for a while, so use a huge condition
-if test "$(tput cols)" -lt "1000"
+# Test out the shorter one for a while
+if test "$(tput cols)" -gt "0"
 then
 	printf '%s (%s) | %s | %s (%s) | %s\n' \
 		"${battery_percentage_remaining}${percent_symbol}" \
