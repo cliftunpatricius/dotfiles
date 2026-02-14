@@ -113,7 +113,6 @@ brew_formulae="bash dash oksh tcsh zsh
 	openssh
 	openvi
 	pdsh
-	plass
 	shellcheck
 	smudge/smudge/nightlight
 	tmux
