@@ -142,6 +142,7 @@ lynx
 mplayer
 newsboat
 pdftk
+plass
 shellcheck
 spleen
 tree
