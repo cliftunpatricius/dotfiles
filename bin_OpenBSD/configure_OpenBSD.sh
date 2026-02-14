@@ -152,7 +152,8 @@ yt-dlp"
 readonly gui_packages="firefox
 mupdf--
 openbsd-backgrounds
-ungoogled-chromium"
+ungoogled-chromium
+vimb"
 
 readonly high_performance_packages="abcde
 opam"
