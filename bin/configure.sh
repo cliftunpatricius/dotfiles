@@ -154,6 +154,7 @@ then
 	gcloud projects list > /dev/null || gcloud auth login
 	test "$(gcloud config get disable_usage_reporting)" = "true" || gcloud config set disable_usage_reporting true
 	gcloud components update
+	command -v gke-gcloud-auth-plugin >/dev/null 2>/dev/null || gcloud components install gke-gcloud-auth-plugin
 
 	# Use the Google account option
 	test -z "$(infracost configure get api_key)" && infracost auth login
