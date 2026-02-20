@@ -72,6 +72,25 @@ done
 test -d "${HOME}/.ssh/config.d" || mkdir -p "${HOME}/.ssh/config.d"
 chmod 750 "${HOME}/.ssh/config.d"
 
+# Install Go packages
+go_packages=""
+if test "${ME_CONTEXT}" = "personal"
+then
+	# shellcheck disable=SC2269
+	go_packages="${go_packages}"
+elif test "${ME_CONTEXT}" = "work"
+then
+	# shellcheck disable=SC2269
+	go_packages="${go_packages}
+		github.com/erroneousboat/slack-term@latest"
+fi
+readonly go_packages
+
+for p in ${go_packages}
+do
+	go install "${p}"
+done
+
 #
 # Platform-specific Configurations (may require user input)
 #

@@ -4,16 +4,23 @@
 # Universal
 #
 
-PATH="${HOME}/bin:${HOME}/.opam/default/bin:${PATH}"
-export PATH
-
 ME_ARCHITECTURE="$(uname -m)"
 ME_OPERATING_SYSTEM="$(uname -s)"
 ME_HOSTNAME="$(uname -n)"
 TERM="tmux-256color"
 LANG=en_US.UTF-8
 LC_CTYPE=en_US.UTF-8
-export ME_ARCHITECTURE ME_OPERATING_SYSTEM ME_HOSTNAME TERM LANG LC_CTYPE
+GOPATH="${HOME}/.go"
+export	ME_ARCHITECTURE \
+	ME_OPERATING_SYSTEM \
+	ME_HOSTNAME \
+	TERM \
+	LANG \
+	LC_CTYPE \
+	GOPATH
+
+PATH="${HOME}/bin:${HOME}/.opam/default/bin:${GOPATH}/bin:${PATH}"
+export PATH
 
 #
 # Personal vs Work
