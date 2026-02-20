@@ -72,7 +72,6 @@ done
 test -d "${HOME}/.ssh/config.d" || mkdir -p "${HOME}/.ssh/config.d"
 chmod 750 "${HOME}/.ssh/config.d"
 
-
 # Install Go packages
 go_packages=""
 if test "${ME_CONTEXT}" = "personal"
