@@ -388,21 +388,24 @@ fi
 # Manual Installations
 #
 
-if test ! -d /Applications/Legentibus.app
-then (
-	cd "${HOME}"/Downloads
-	curl -sLO https://dasv9twosra2d.cloudfront.net/desktop/releases/Legentibus-x64.dmg
-	printf 'Legentibus installer downloaded as %s\n' \
-		"${HOME}/Downloads/Legentibus-x64.dmg"
-) fi
+if test "${ME_CONTEXT}" = "personal"
+then
+	if test ! -d /Applications/Legentibus.app
+	then (
+		cd "${HOME}"/Downloads
+		curl -sLO https://dasv9twosra2d.cloudfront.net/desktop/releases/Legentibus-x64.dmg
+		printf 'Legentibus installer downloaded as %s\n' \
+			"${HOME}/Downloads/Legentibus-x64.dmg"
+	) fi
 
-if test ! -d /Applications/Mudita\ Center.app
-then (
-	cd "${HOME}"/Downloads
-	curl -sLO https://github.com/mudita/mudita-center/releases/latest/download/Mudita-Center.dmg
-	printf 'Mudita Center installer downloaded as %s\n' \
-		"${HOME}/Downloads/Mudita-Center.dmg"
-) fi
+	if test ! -d /Applications/Mudita\ Center.app
+	then (
+		cd "${HOME}"/Downloads
+		curl -sLO https://github.com/mudita/mudita-center/releases/latest/download/Mudita-Center.dmg
+		printf 'Mudita Center installer downloaded as %s\n' \
+			"${HOME}/Downloads/Mudita-Center.dmg"
+	) fi
+fi
 
 printf 'The following configurations are not handled by this script:\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
 '- lock screen immediately after display is off' \
