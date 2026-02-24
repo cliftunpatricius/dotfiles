@@ -125,10 +125,13 @@ brew_formulae="bash dash oksh tcsh zsh
 #  1. Check for an aspect that gets installed/configured
 #  2. If detected, prompt user if the entire specific use-case should now be removed
 #  3. Proceed accordingly
-if test "${ME_CONTEXT}" = "personal" -a "${ME_IS_DNS_SERVER}" = "true"
+if test "${ME_CONTEXT}" = "personal"
 then
-	brew_formulae="${brew_formulae}
-		unbound"
+	if test "${ME_IS_DNS_SERVER}" = "true"
+	then
+		brew_formulae="${brew_formulae}
+			unbound"
+	fi
 elif test "${ME_CONTEXT}" = "work"
 then
 	brew tap -q hashicorp/tap
@@ -169,6 +172,7 @@ brew_casks="firefox
 if test "${ME_CONTEXT}" = "personal"
 then
 	brew_casks="${brew_casks}
+		android-file-transfer
 		logos
 		proton-pass"
 elif test "${ME_CONTEXT}" = "work"
