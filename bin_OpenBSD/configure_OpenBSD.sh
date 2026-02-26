@@ -143,6 +143,7 @@ mplayer
 newsboat
 pdftk
 plass
+rsync--
 shellcheck
 spleen
 tree
