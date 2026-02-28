@@ -53,7 +53,8 @@ do
 	then
 		ffmpeg -nostdin -hide_banner -i "${f}" \
 			-metadata title="${filename}" \
-			-codec copy
+			-codec copy \
+			"${f}"
 	fi
 done
 
