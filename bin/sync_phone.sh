@@ -44,6 +44,7 @@ find "${HOME}"/phone_local -type f \( \
 \) | while read -r f
 do
 	filename="$(basename "${f}" | sed -rnE 's/^(.+)(\.[a-zA-Z0-9]{3,4})$/\1/p')"
+	extension="$(basename "${f}" | sed -rnE 's/^(.+)(\.[a-zA-Z0-9]{3,4})$/\2/p')"
 	title="$(ffmpeg -nostdin -hide_banner -i "${f}" 2>&1 |
 		grep -E '^[[:space:]]+title[[:space:]]+:' |
 		awk -F ': ' '{ print $2; }'
@@ -54,9 +55,9 @@ do
 		ffmpeg -nostdin -hide_banner -i "${f}" \
 			-metadata title="${filename}" \
 			-codec copy \
-			"${filename}.tmp"
+			"${filename}.tmp.${extension}"
 
-		mv -v "${filename}.tmp" "${f}"
+		mv -v "${filename}.tmp.${extension}" "${f}"
 	fi
 done
 
