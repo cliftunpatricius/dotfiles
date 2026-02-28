@@ -10,62 +10,19 @@ set -e
 # doas mount.exfat /dev/sd1i ~/phone_sd
 
 #
-# Subroutines
-#
-
-usage()
-{
-	echo "usage"
-}
-
-#
-# Parse Arguments
-#
-
-# Defaults
-_directory=""
-_force="false"
-while getopts 'd:fh' OPTION
-do
-	case "${OPTION}" in
-	d)
-		readonly _directory="${OPTARG}"
-		;;
-	f)
-		readonly _force="true"
-		;;
-	h)
-		usage
-		exit
-		;;
-	?)
-		usage >&2
-		exit 1
-		;;
-	esac
-done
-
-#
 # Main
 #
 
-#if test -n "${_directory}"
-#then
-#	"$(printf '%s' "${_directory}" | sed -E "s/^${HOME}\/cosmos\///")"
-#else
-	printf 'Syncing ~/cosmos subdirectories to ~/phone_local ...\n'
-	rsync -a --ignore-existing --del \
-		"${HOME}"/cosmos/audiobooks \
-		"${HOME}"/cosmos/books \
-		"${HOME}"/cosmos/music \
-		"${HOME}"/cosmos/pedagogy \
-		"${HOME}"/phone_local
-#fi
+printf 'Syncing ~/cosmos subdirectories to ~/phone_local ...\n'
+rsync -a --ignore-existing --del \
+	"${HOME}"/cosmos/audiobooks \
+	"${HOME}"/cosmos/books \
+	"${HOME}"/cosmos/music \
+	"${HOME}"/cosmos/pedagogy \
+	"${HOME}"/phone_local
 
-# Modify "phone" files as necessary:
-# - Track title should match filename pattern: <track_number> <track_title>
-# - Remove embeded images (would like to do that to "master" files as well...)
-
+# Track title should match filename pattern: <track_number> <track_title>
+# Remove embeded images (would like to do that to "master" files as well...)
 printf 'Modifying FLAC metadata in phone_local ...\n'
 find "${HOME}"/phone_local -type f -iname '*.flac' | while read -r f
 do
@@ -94,7 +51,6 @@ do
 	fi
 done
 
-# Sync phone subdirectories to phone's SD card
 if df "${HOME}"/phone_sd >/dev/null 2>/dev/null
 then
 	printf 'Syncing ~/phone_local to ~/phone_sd ...\n'
