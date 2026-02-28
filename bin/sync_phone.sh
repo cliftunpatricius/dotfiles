@@ -21,33 +21,39 @@ rsync -a --ignore-existing --del \
 	"${HOME}"/cosmos/pedagogy \
 	"${HOME}"/phone_local
 
+# Useful at least as a template to see what is there...
+phone_local_extensions="$(find "${HOME}"/phone_local -type f |
+	sed -rnE 's/^.+\.([a-zA-Z0-9]{3,4})$/\1/p' |
+	sort |
+	uniq |
+	grep -E '(flac|m4a|mkv|mp3|mp4|wav)'
+)"
+# shellcheck disable=SC2034
+readonly phone_local_extensions
+
 # Track title should match filename pattern: <track_number> <track_title>
 # Remove embeded images (would like to do that to "master" files as well...)
-printf 'Modifying FLAC metadata in phone_local ...\n'
-find "${HOME}"/phone_local -type f -iname '*.flac' | while read -r f
+printf 'Modifying metadata in ~/phone_local ...\n'
+find "${HOME}"/phone_local -type f \( \
+	-iname '*.flac' -o \
+	-iname '*.m4a' -o \
+	-iname '*.mkv' -o \
+	-iname '*.mp3' -o \
+	-iname '*.mp4' -o \
+	-iname '*.wav' \
+\) | while read -r f
 do
 	filename="$(basename "${f}")"
-	title="$(metaflac --show-tag=title "${f}")"
-
-	if test "${filename}" != "${title}"
-	then
-		metaflac --set-tag="title=${filename%.flac}" "${f}"
-	fi
-done
-
-printf 'Modifying MP3 metadata in phone_local ...\n'
-find "${HOME}"/phone_local -type f -iname '*.mp3' | while read -r f
-do
-	filename="$(basename "${f}")"
-	title="$(mpg123-id3dump "${f}" 2>/dev/null |
-		grep -EA 1 '^====[[:space:]]+ID3v2[[:space:]]+====$' |
-		grep 'Title:' |
-		awk -F 'Title: ' '{print $2;}'
+	title="$(ffmpeg -nostdin -hide_banner -i "${f}" |
+		grep -E '^[[:space:]]+title[[:space:]]+:' |
+		awk -F ': ' '{ print $2; }'
 	)"
 
 	if test "${filename}" != "${title}"
 	then
-		id3tag --song="${filename%.mp3}" "${f}" >/dev/null
+		ffmpeg -nostdin -hide_banner -i "${f}" \
+			-metadata title="${filename}" \
+			-codec copy
 	fi
 done
 
