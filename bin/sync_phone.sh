@@ -54,9 +54,9 @@ do
 		ffmpeg -nostdin -hide_banner -i "${f}" \
 			-metadata title="${filename}" \
 			-codec copy \
-			"tmp.${f}"
+			"${filename}.tmp"
 
-		mv -v "tmp.${f}" "${f}"
+		mv -v "${filename}.tmp" "${f}"
 	fi
 done
 
