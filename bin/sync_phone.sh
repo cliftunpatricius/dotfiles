@@ -53,7 +53,7 @@ done
 #then
 #	"$(printf '%s' "${_directory}" | sed -E "s/^${HOME}\/cosmos\///")"
 #else
-	printf 'rsync --ignore-existing cosmos to phone_local ...\n'
+	printf 'Syncing ~/cosmos subdirectories to ~/phone_local ...\n'
 	rsync -a --ignore-existing --del \
 		"${HOME}"/cosmos/audiobooks \
 		"${HOME}"/cosmos/books \
@@ -66,7 +66,7 @@ done
 # - Track title should match filename pattern: <track_number> <track_title>
 # - Remove embeded images (would like to do that to "master" files as well...)
 
-printf 'update phone_local flac ...\n'
+printf 'Modifying FLAC metadata in phone_local ...\n'
 find "${HOME}"/phone_local -type f -iname '*.flac' | while read -r f
 do
 	filename="$(basename "${f}")"
@@ -78,25 +78,25 @@ do
 	fi
 done
 
-#printf 'update phone_local mp3 ...\n'
-#find "${HOME}"/phone_local -type f -iname '*.mp3' | while read -r f
-#do
-#	filename="$(basename "${f}")"
-#	title="$(mpg123-id3dump "${f}" 2>/dev/null |
-#		grep -EA 1 '^====[[:space:]]+ID3v2[[:space:]]+====$' |
-#		grep 'Title:' |
-#		awk -F 'Title: ' '{print $2;}'
-#	)"
-#
-#	if test "${filename}" != "${title}"
-#	then
-#		id3tag --song="${filename%.mp3}" "${f}"
-#	fi
-#done
+printf 'Modifying MP3 metadata in phone_local ...\n'
+find "${HOME}"/phone_local -type f -iname '*.mp3' | while read -r f
+do
+	filename="$(basename "${f}")"
+	title="$(mpg123-id3dump "${f}" 2>/dev/null |
+		grep -EA 1 '^====[[:space:]]+ID3v2[[:space:]]+====$' |
+		grep 'Title:' |
+		awk -F 'Title: ' '{print $2;}'
+	)"
+
+	if test "${filename}" != "${title}"
+	then
+		id3tag --song="${filename%.mp3}" "${f}"
+	fi
+done
 
 # Sync phone subdirectories to phone's SD card
 if df "${HOME}"/phone_sd >/dev/null 2>/dev/null
 then
-	printf 'rsync phone_local to phone_sd ...\n'
-	rsync -a --del "${HOME}"/phone_local/ "${HOME}"/phone_sd
+	printf 'Syncing ~/phone_local to ~/phone_sd ...\n'
+	rsync -rlpto --del "${HOME}"/phone_local/ "${HOME}"/phone_sd
 fi
