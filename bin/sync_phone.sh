@@ -90,7 +90,7 @@ do
 
 	if test "${filename}" != "${title}"
 	then
-		id3tag --song="${filename%.mp3}" "${f}"
+		id3tag --song="${filename%.mp3}" "${f}" >/dev/null
 	fi
 done
 
