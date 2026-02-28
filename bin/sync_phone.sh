@@ -43,8 +43,8 @@ find "${HOME}"/phone_local -type f \( \
 	-iname '*.wav' \
 \) | while read -r f
 do
-	filename="$(basename "${f}")"
-	title="$(ffmpeg -nostdin -hide_banner -i "${f}" |
+	filename="$(basename "${f}" | sed -rnE 's/^(.+)(\.[a-zA-Z0-9]{3,4})$/\1/p')"
+	title="$(ffmpeg -nostdin -hide_banner -i "${f}" 2>&1 |
 		grep -E '^[[:space:]]+title[[:space:]]+:' |
 		awk -F ': ' '{ print $2; }'
 	)"
@@ -57,7 +57,7 @@ do
 	fi
 done
 
-if df "${HOME}"/phone_sd >/dev/null 2>/dev/null
+if df "${HOME}"/phone_sd >/dev/null 2>/dev/null && test -n "${*}"
 then
 	printf 'Syncing ~/phone_local to ~/phone_sd ...\n'
 	rsync -rlpto --del "${HOME}"/phone_local/ "${HOME}"/phone_sd
