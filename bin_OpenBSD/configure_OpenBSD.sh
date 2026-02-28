@@ -133,6 +133,7 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 readonly packages="clamav
 cmus
 curl
+exfat-fuse
 flac
 ffmpeg
 flashrom
