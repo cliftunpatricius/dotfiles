@@ -130,7 +130,8 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 
 ### Standard Packages
 
-readonly packages="clamav
+readonly packages="castget
+clamav
 cmus
 curl
 exfat-fuse
