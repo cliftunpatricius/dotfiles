@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec enscript -o - | gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=- - 2>/dev/null

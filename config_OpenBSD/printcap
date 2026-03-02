@@ -1,0 +1,4 @@
+lp|local USB Printer:\
+	:lp=/dev/ulpt0:\
+	:sd=/var/spool/output/lpd:\
+	:lf=/var/log/lpd-errs:

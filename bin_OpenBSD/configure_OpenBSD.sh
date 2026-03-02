@@ -134,11 +134,13 @@ readonly packages="castget
 clamav
 cmus
 curl
+enscript
 exfat-fuse
 flac
 ffmpeg
 flashrom
 frotz
+ghostscript
 git
 lynx
 mplayer
@@ -192,7 +194,47 @@ then
 	)
 fi
 
-### OCaml Source-based Packages
+#
+# Printing
+#
+# https://openbsdhandbook.com/printing/#configuring-printing-with-lpd
+#
+
+if doas rcctl ls off | grep -q '^lpd$'
+then
+	printf 'Enabling lpd ... '
+	doas rcctl enable lpd
+	printf 'done\n'
+fi
+
+doas chown daemon /dev/ulpt0
+chmod 600 /dev/ulpt0
+
+cmp -s /etc/printcap "${HOME}/dotfiles/config_OpenBSD/printcap" || {
+	printf 'Updating /etc/printcap ... '
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/printcap" /etc/printcap
+	doas chown root:wheel /etc/printcap
+	doas chmod 644 /etc/printcap
+	printf 'done\n'
+}
+
+if test ! -d /var/spool/output/lpd
+then
+	mkdir -p /var/spool/output/lpd
+fi
+chown daemon:daemon /var/spool/output/lpd
+
+cmp -s /usr/local/libexec/psfilter "${HOME}/dotfiles/config_OpenBSD/psfilter" || {
+	printf 'Updating /usr/local/libexec/psfilter ... '
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/psfilter" /usr/local/libexec/psfilter
+	doas chown root:wheel /usr/local/libexec/psfilter
+	doas chmod 774 /usr/local/libexec/psfilter
+	printf 'done\n'
+}
+
+#
+# OCaml Source-based Packages
+#
 
 if command -v opam >/dev/null 2>/dev/null
 then
