@@ -2,6 +2,8 @@
 
 set -e
 
+# Eh, it works well-enough for now...
+
 # "Notes" on getting my SD card to exfat
 # fdisk as NTFS
 # doas mkfs.exfat /dev/sd1i
