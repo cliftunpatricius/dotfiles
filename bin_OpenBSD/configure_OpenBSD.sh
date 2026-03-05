@@ -125,6 +125,40 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 }
 
 #
+# Printing
+#
+# Inspiration:
+# - https://openbsdhandbook.com/printing/#configuring-printing-with-lpd
+# - https://www.paedubucher.ch/articles/basic-printing-on-openbsd/
+#
+
+# In case a USB connection is needed at some point
+doas chown daemon /dev/ulpt0
+doas chmod 600 /dev/ulpt0
+
+cmp -s /etc/printcap "${HOME}/dotfiles/config_OpenBSD/printcap" || {
+	printf 'Updating /etc/printcap ... '
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/printcap" /etc/printcap
+	doas chown root:wheel /etc/printcap
+	doas chmod 644 /etc/printcap
+	printf 'done\n'
+}
+
+if test ! -d /var/spool/output/brother
+then
+	doas mkdir -p /var/spool/output/brother
+fi
+doas chown -R daemon:daemon /var/spool/output/brother
+doas chmod 770 /var/spool/output/brother
+
+if doas rcctl ls off | grep -q '^lpd$'
+then
+	printf 'Enabling lpd ... '
+	doas rcctl enable lpd
+	printf 'done\n'
+fi
+
+#
 # Packages
 #
 
@@ -140,7 +174,7 @@ flac
 ffmpeg
 flashrom
 frotz
-ghostscript
+ghostscript--
 git
 lynx
 mplayer
@@ -193,44 +227,6 @@ then
 		tr '\n' ' '
 	)
 fi
-
-#
-# Printing
-#
-# https://openbsdhandbook.com/printing/#configuring-printing-with-lpd
-#
-
-if doas rcctl ls off | grep -q '^lpd$'
-then
-	printf 'Enabling lpd ... '
-	doas rcctl enable lpd
-	printf 'done\n'
-fi
-
-doas chown daemon /dev/ulpt0
-chmod 600 /dev/ulpt0
-
-cmp -s /etc/printcap "${HOME}/dotfiles/config_OpenBSD/printcap" || {
-	printf 'Updating /etc/printcap ... '
-	doas cp -a "${HOME}/dotfiles/config_OpenBSD/printcap" /etc/printcap
-	doas chown root:wheel /etc/printcap
-	doas chmod 644 /etc/printcap
-	printf 'done\n'
-}
-
-if test ! -d /var/spool/output/lpd
-then
-	mkdir -p /var/spool/output/lpd
-fi
-chown daemon:daemon /var/spool/output/lpd
-
-cmp -s /usr/local/libexec/psfilter "${HOME}/dotfiles/config_OpenBSD/psfilter" || {
-	printf 'Updating /usr/local/libexec/psfilter ... '
-	doas cp -a "${HOME}/dotfiles/config_OpenBSD/psfilter" /usr/local/libexec/psfilter
-	doas chown root:wheel /usr/local/libexec/psfilter
-	doas chmod 774 /usr/local/libexec/psfilter
-	printf 'done\n'
-}
 
 #
 # OCaml Source-based Packages
