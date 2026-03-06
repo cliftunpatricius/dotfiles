@@ -20,7 +20,7 @@ then
 
 	# Get all resource IDs in Terraform state
 	# From another developer and in Powershell. Will convert later.
-	alias get_terraform_resource_ids="terraform state list | %{ $a=$_; terraform state show $_ 2>$null | Select-String -Pattern "\s+id\s+" | % { $_.ToString().Replace('id', $a) } }"
+	#alias get_terraform_resource_ids="terraform state list | %{ $a=$_; terraform state show $_ 2>$null | Select-String -Pattern "\s+id\s+" | % { $_.ToString().Replace('id', $a) } }"
 
 	# Playback rate... apparently this was useful somewhere to speed-up a video...
 	alias playback_rate_example="document.querySelector('video').playbackRate = 2.0;"
@@ -50,22 +50,22 @@ then
 
 	test_mail3_logos_com()
 	{
+		__test_mail3_logos_com__host="$(uname -n)"
 		__test_mail3_logos_com__email="$(git config user.email)"
 		__test_mail3_logos_com__lines="EHLO abc.com|
-		MAIL FROM: $(git config user.email)|
-		MAIL FROM: $(git config user.email)|
-		RCPT TO: $(git config user.email)|
-		DATA|
-		From: $(git config user.email)\nMIME-Version: 1.0 (mime-construct 1.9)\n\n|
-		Hostname: $(uname -n)|
-		.|
-		quit"
+			MAIL FROM: ${__test_mail3_logos_com__email}|
+			RCPT TO: ${__test_mail3_logos_com__email}|
+			DATA|
+			From: ${__test_mail3_logos_com__email}\nMIME-Version: 1.0 (mime-construct 1.9)\n\n|
+			Hostname: ${__test_mail3_logos_com__host}|
+			.|
+			quit"
 
 		IFS='|'
 		for i in ${__test_mail3_logos_com__lines}
 		do
 			printf '%s' "${i}"
-			sleep 1
+			sleep 2
 		done | nc -v mail3.logos.com 25
 		unset IFS
 	}
