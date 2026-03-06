@@ -48,25 +48,31 @@ then
 		done | sort | uniq
 	}
 
-	test_mail3_logos_com()
+	test_smtp_relay()
 	{
-		__test_mail3_logos_com__host="$(uname -n)"
-		__test_mail3_logos_com__email="$(git config user.email)"
-		__test_mail3_logos_com__lines="EHLO abc.com|
-			MAIL FROM: ${__test_mail3_logos_com__email}|
-			RCPT TO: ${__test_mail3_logos_com__email}|
+		if test -z "${1}"
+		then
+			printf 'Pass the SMTP relay domain.\n' >&2
+			return 1
+		fi
+
+		__test_smtp_relay__host="$(uname -n)"
+		__test_smtp_relay__email="$(git config user.email)"
+		__test_smtp_relay__lines="EHLO abc.com|
+			MAIL FROM: ${__test_smtp_relay__email}|
+			RCPT TO: ${__test_smtp_relay__email}|
 			DATA|
-			From: ${__test_mail3_logos_com__email}\nMIME-Version: 1.0 (mime-construct 1.9)\n\n|
-			Hostname: ${__test_mail3_logos_com__host}|
+			From: ${__test_smtp_relay__email}\nMIME-Version: 1.0 (mime-construct 1.9)\n\n|
+			Hostname: ${__test_smtp_relay__host}|
 			.|
 			quit"
 
 		IFS='|'
-		for i in ${__test_mail3_logos_com__lines}
+		for i in ${__test_smtp_relay__lines}
 		do
 			printf '%s' "${i}"
 			sleep 2
-		done | nc -v mail3.logos.com 25
+		done | nc -v "${1}" 25
 		unset IFS
 	}
 fi
