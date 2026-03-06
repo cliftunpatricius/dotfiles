@@ -1,0 +1,7 @@
+lp|brother:\
+	:sh=true:\
+	:rm=brother.home.:\
+	:sd=/var/spool/output/brother:\
+	:lf=/var/log/lpd-errs:\
+	:rp=brother:
+

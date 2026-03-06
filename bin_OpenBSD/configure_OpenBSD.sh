@@ -125,6 +125,40 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 }
 
 #
+# Printing
+#
+# Inspiration:
+# - https://openbsdhandbook.com/printing/#configuring-printing-with-lpd
+# - https://www.paedubucher.ch/articles/basic-printing-on-openbsd/
+#
+
+# In case a USB connection is needed at some point
+doas chown daemon /dev/ulpt0
+doas chmod 600 /dev/ulpt0
+
+cmp -s /etc/printcap "${HOME}/dotfiles/config_OpenBSD/printcap" || {
+	printf 'Updating /etc/printcap ... '
+	doas cp -a "${HOME}/dotfiles/config_OpenBSD/printcap" /etc/printcap
+	doas chown root:wheel /etc/printcap
+	doas chmod 644 /etc/printcap
+	printf 'done\n'
+}
+
+if test ! -d /var/spool/output/brother
+then
+	doas mkdir -p /var/spool/output/brother
+fi
+doas chown -R daemon:daemon /var/spool/output/brother
+doas chmod 770 /var/spool/output/brother
+
+if doas rcctl ls off | grep -q '^lpd$'
+then
+	printf 'Enabling lpd ... '
+	doas rcctl enable lpd
+	printf 'done\n'
+fi
+
+#
 # Packages
 #
 
@@ -134,11 +168,13 @@ readonly packages="castget
 clamav
 cmus
 curl
+enscript
 exfat-fuse
 flac
 ffmpeg
 flashrom
 frotz
+ghostscript--
 git
 lynx
 mplayer
@@ -192,7 +228,9 @@ then
 	)
 fi
 
-### OCaml Source-based Packages
+#
+# OCaml Source-based Packages
+#
 
 if command -v opam >/dev/null 2>/dev/null
 then
