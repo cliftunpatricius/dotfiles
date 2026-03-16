@@ -125,7 +125,7 @@ cmp -s /etc/sysctl.conf "${HOME}/dotfiles/config_OpenBSD/sysctl.conf" || {
 }
 
 #
-# Printing
+# Printing (WIP)
 #
 # Inspiration:
 # - https://openbsdhandbook.com/printing/#configuring-printing-with-lpd
