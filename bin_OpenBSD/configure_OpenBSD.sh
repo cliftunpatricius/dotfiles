@@ -176,6 +176,7 @@ flashrom
 frotz
 ghostscript--
 git
+got
 lynx
 mplayer
 newsboat
