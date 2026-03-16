@@ -164,7 +164,8 @@ fi
 
 ### Standard Packages
 
-readonly packages="castget
+readonly packages="bible-kjv
+castget
 clamav
 cmus
 curl
@@ -199,7 +200,8 @@ vimb"
 readonly high_performance_packages="abcde
 opam"
 
-readonly high_performance_gui_packages="stellarium"
+readonly high_performance_gui_packages="celestia
+stellarium"
 
 printf 'Installing/updating packages ...\n'
 # shellcheck disable=SC2046
