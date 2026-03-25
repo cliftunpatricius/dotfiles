@@ -1,0 +1,3 @@
+#!/bin/sh
+
+#aucat -i /etc/apm/tired.wav
