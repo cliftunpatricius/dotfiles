@@ -53,23 +53,28 @@ fi
 # Battery
 #
 
-# In combination with the contents of the ~/.x* files,
-# this will cause the laptop to first lock and then to
-# suspend when the lid is closed.
 test -d /etc/apm || doas mkdir /etc/apm
-test -f /etc/apm/suspend || {
-	printf 'Touching /etc/apm/suspend ... '
-	doas touch /etc/apm/suspend
-	printf 'done\n'
-}
 
-cmp -s /etc/apm/suspend "${HOME}/dotfiles/config_OpenBSD/suspend" || {
-	printf 'Updating /etc/apm/suspend ... '
-	doas cp -a "${HOME}/dotfiles/config_OpenBSD/suspend" /etc/apm/suspend
-	doas chown root:wheel /etc/apm/suspend
-	doas chmod 750 /etc/apm/suspend
-	printf 'done\n'
-}
+apm_files="$(find "${HOME}"/dotfiles/config_OpenBSD/apm -type f)"
+readonly apm_files
+
+for src in ${apm_files}
+do
+	dst="/etc/apm/$(basename "${src}")"
+
+	test -f "${dst}" || {
+		printf 'Touching %s ... ' "${dst}"
+		doas touch "${dst}"
+		printf 'done\n'
+	}
+	cmp -s "${dst}" "${src}" || {
+		printf 'Updating %s ... ' "${dst}"
+		doas cp -a "${src}" "${dst}"
+		doas chown root:wheel "${dst}"
+		doas chmod 750 "${dst}"
+		printf 'done\n'
+	}
+done
 
 if doas rcctl ls off | grep -q '^apmd$'
 then

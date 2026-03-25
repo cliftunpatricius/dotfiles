@@ -1,0 +1,7 @@
+#!/bin/sh
+
+sleep 5
+if ifconfig ure0 2>/dev/null | grep -q 'active'
+then
+	sh /etc/netstart
+fi

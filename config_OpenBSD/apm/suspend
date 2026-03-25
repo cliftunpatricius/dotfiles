@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# In combination with the contents of the ~/.x* files,
+# this will cause the laptop to first lock and then to
+# suspend when the lid is closed.
+pkill -USR1 xidle
