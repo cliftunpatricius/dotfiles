@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sleep 3
+sleep 5
 if ifconfig ure0 >/dev/null 2>/dev/null
 then
 	sh /etc/netstart

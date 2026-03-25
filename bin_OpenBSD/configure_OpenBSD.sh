@@ -55,7 +55,10 @@ fi
 
 test -d /etc/apm || doas mkdir /etc/apm
 
-find "${HOME}"/dotfiles/config_OpenBSD/apm -type f | while read -r src
+apm_files="$(find "${HOME}"/dotfiles/config_OpenBSD/apm -type f)"
+readonly apm_files
+
+for src in ${apm_files}
 do
 	dst="/etc/apm/$(basename "${src}")"
 
