@@ -174,6 +174,7 @@ then
 	brew_casks="${brew_casks}
 		android-file-transfer
 		logos
+		protonvpn
 		proton-pass"
 elif test "${ME_CONTEXT}" = "work"
 then
