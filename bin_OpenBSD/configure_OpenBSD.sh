@@ -170,11 +170,13 @@ fi
 ### Standard Packages
 
 readonly packages="bible-kjv
+calibre
 castget
 clamav
 cmus
 curl
 enscript
+epr-reader
 exfat-fuse
 flac
 ffmpeg
@@ -186,6 +188,7 @@ got
 lynx
 mplayer
 newsboat
+pdfgrep
 pdftk
 plass
 rsync--
