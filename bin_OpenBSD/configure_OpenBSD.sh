@@ -194,6 +194,7 @@ plass
 rsync--
 shellcheck
 spleen
+srandrd
 tree
 vorbis-tools
 wireguard-tools
