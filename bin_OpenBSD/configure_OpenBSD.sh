@@ -170,7 +170,6 @@ fi
 ### Standard Packages
 
 readonly packages="bible-kjv
-calibre
 castget
 clamav
 cmus
@@ -199,7 +198,8 @@ vorbis-tools
 wireguard-tools
 yt-dlp"
 
-readonly gui_packages="firefox
+readonly gui_packages="calibre
+firefox
 mupdf--
 openbsd-backgrounds
 ungoogled-chromium
