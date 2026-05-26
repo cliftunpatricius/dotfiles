@@ -144,7 +144,6 @@ then
 		go
 		hadolint
 		hashicorp/tap/terraform
-		infracost
 		kubelogin
 		ruby@${RUBY_VERSION}
 		tiger-vnc"
