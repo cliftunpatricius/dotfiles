@@ -1,0 +1,5 @@
+# Always use these settings
+--download-archive ~/cosmos/documents/yt-dlp-archive-video
+--embed-thumbnail
+-o "~/cosmos/pedagogy_video/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+--prefer-free-formats
