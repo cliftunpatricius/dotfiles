@@ -3,6 +3,7 @@
 --audio-quality 0
 --download-archive ~/cosmos/documents/yt-dlp-archive
 --embed-thumbnail
+--ignore-config
 -o "~/cosmos/pedagogy/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
 --restrict-filenames
 -x
