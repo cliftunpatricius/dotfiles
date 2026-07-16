@@ -1,9 +1,7 @@
 # Always use these settings
---audio-format flac
---audio-quality 0
---download-archive ~/cosmos/documents/yt-dlp-archive
+--download-archive ~/cosmos/documents/yt_dlp_archive_playlists_video
 --embed-thumbnail
 --ignore-config
 -o "~/cosmos/pedagogy/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+--prefer-free-formats
 --restrict-filenames
--x

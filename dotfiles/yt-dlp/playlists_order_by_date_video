@@ -1,0 +1,7 @@
+# Always use these settings
+--download-archive ~/cosmos/documents/yt_dlp_archive_playlists_video_order_by_date
+--embed-thumbnail
+--ignore-config
+-o "~/cosmos/pedagogy_video/%(channel)s/%(playlist)s/%(upload_date)s - %(title)s.%(ext)s"
+--prefer-free-formats
+--restrict-filenames

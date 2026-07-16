@@ -16,7 +16,7 @@ set -e
 #
 
 printf 'Syncing ~/cosmos subdirectories to ~/phone_local ...\n'
-rsync -a --ignore-existing --del \
+rsync -rlpto --ignore-existing --del \
 	"${HOME}"/cosmos/audiobooks \
 	"${HOME}"/cosmos/books \
 	"${HOME}"/cosmos/music \
@@ -45,6 +45,12 @@ find "${HOME}"/phone_local -type f \( \
 	-iname '*.wav' \
 \) | while read -r f
 do
+	# There's something weird with these files right now
+	if printf '%s' "${f}" | grep -q '.*Colin_Gorrie.*'
+	then
+		continue
+	fi
+
 	filename="$(basename "${f}" | sed -rnE 's/^(.+)(\.[a-zA-Z0-9]{3,4})$/\1/p')"
 	extension="$(basename "${f}" | sed -rnE 's/^(.+)(\.[a-zA-Z0-9]{3,4})$/\2/p')"
 	title="$(ffmpeg -nostdin -hide_banner -i "${f}" 2>&1 |

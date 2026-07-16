@@ -1,0 +1,9 @@
+# Always use these settings
+--audio-format flac
+--audio-quality 0
+--download-archive ~/cosmos/documents/yt_dlp_archive_playlists_order_by_title
+--embed-thumbnail
+--ignore-config
+-o "~/cosmos/pedagogy/%(playlist)s/%(title)s.%(ext)s"
+--restrict-filenames
+-x

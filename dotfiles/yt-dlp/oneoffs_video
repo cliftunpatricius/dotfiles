@@ -1,5 +1,5 @@
 # Always use these settings
---download-archive ~/cosmos/documents/yt-dlp-archive-video
+--download-archive ~/cosmos/documents/yt_dlp_archive_oneoffs_video
 --embed-thumbnail
 --ignore-config
 -o "~/cosmos/pedagogy_video/%(channel)s/%(upload_date)s - %(title)s.%(ext)s"

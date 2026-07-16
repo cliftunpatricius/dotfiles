@@ -1,0 +1,9 @@
+# Always use these settings
+--audio-format flac
+--audio-quality 0
+--download-archive ~/cosmos/documents/yt_dlp_archive_audiobooks
+--embed-thumbnail
+--ignore-config
+-o "~/cosmos/audiobooks/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+--restrict-filenames
+-x
