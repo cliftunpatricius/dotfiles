@@ -135,6 +135,7 @@ then
 elif test "${ME_CONTEXT}" = "work"
 then
 	brew tap -q hashicorp/tap
+	brew tap -q terraform-linters/tap
 
 	brew_formulae="${brew_formulae}
 		act
@@ -151,7 +152,7 @@ fi
 readonly brew_formulae
 
 # shellcheck disable=SC2086
-brew install -q ${brew_formulae}
+brew install -yq ${brew_formulae}
 
 # Add Homebrew-installed shells to the list of allowed user shells for `chpass`
 grep -q "${HOMEBREW_PREFIX}/bin/bash" /etc/shells || echo "${HOMEBREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells
@@ -165,6 +166,7 @@ readonly _shell="${HOMEBREW_PREFIX}/bin/oksh"
 # Install GUI packages.
 brew_casks="firefox
 	font-spleen
+	terraform-linters/tap/tflint
 	ungoogled-chromium
 	utm"
 
@@ -192,7 +194,7 @@ fi
 readonly brew_casks
 
 # shellcheck disable=SC2086
-brew install -q --cask ${brew_casks}
+brew install -yq --cask ${brew_casks}
 
 if test "${ME_CONTEXT}" = "work" -a -n "${GEM_VERSION}"
 then
@@ -276,7 +278,7 @@ then
 	then
 		readonly tailscale_dns="100.100.100.100"
 
-		brew install -q tailscale
+		brew install -yq tailscale
 
 		if tailscale status 2>&1 | grep -q '^failed to connect'
 		then
