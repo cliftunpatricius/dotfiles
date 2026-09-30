@@ -152,7 +152,7 @@ fi
 readonly brew_formulae
 
 # shellcheck disable=SC2086
-brew install -yq ${brew_formulae}
+brew install -yq --formula ${brew_formulae}
 
 # Add Homebrew-installed shells to the list of allowed user shells for `chpass`
 grep -q "${HOMEBREW_PREFIX}/bin/bash" /etc/shells || echo "${HOMEBREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells
@@ -278,7 +278,7 @@ then
 	then
 		readonly tailscale_dns="100.100.100.100"
 
-		brew install -yq tailscale
+		brew install -yq --formula tailscale
 
 		if tailscale status 2>&1 | grep -q '^failed to connect'
 		then
