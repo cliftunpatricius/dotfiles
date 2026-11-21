@@ -21,6 +21,8 @@ rsync -rlpto --ignore-existing --del \
 	"${HOME}"/cosmos/books \
 	"${HOME}"/cosmos/music \
 	"${HOME}"/cosmos/pedagogy \
+	"${HOME}"/cosmos/playlists \
+	"${HOME}"/cosmos/shakespeare \
 	"${HOME}"/phone_local
 
 # Useful at least as a template to see what is there...

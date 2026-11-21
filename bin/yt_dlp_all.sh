@@ -9,6 +9,8 @@ oneoffs
 oneoffs_video
 playlists
 playlists_video
+playlists_from_various_channels
+playlists_from_various_channels_video
 playlists_order_by_date
 playlists_order_by_date_video
 playlists_order_by_title
