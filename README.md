@@ -81,6 +81,7 @@ find "${HOME}" -type l -exec file {} \; |
 1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding
    executables (and their libraries): `./install.sh`
 1. Leaving the current shell running, open a new one and test things out
+1. Configure git via: `configure_git.sh` BEFORE committing work!!!
 
 ## Acknowledgements
 

@@ -23,8 +23,11 @@ then
 fi
 
 #
-# Personal vs Work (borrowed from dotfiles/profile)
+# Some minimal environment variables (borrowed from dotfiles/profile)
 #
+
+ME_OPERATING_SYSTEM="$(uname -s)"
+export ME_OPERATING_SYSTEM
 
 if printf '%s' "$(uname -n)" | grep -qE '^ws[[:digit:]]{4}$'
 then
@@ -32,6 +35,7 @@ then
 else
         ME_CONTEXT="personal"
 fi
+export ME_CONTEXT
 
 #
 # Main

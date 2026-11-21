@@ -122,7 +122,7 @@ then
 	then
 		if test "$("${_shell}" -c ': && printf OK')" = "OK"
 		then
-			chpass -s "${_shell}"
+			chsh -s "${_shell}"
 		else
 			print_notice_message "Invalid shell path given (${_shell}); Shell remains ${SHELL}"
 		fi
