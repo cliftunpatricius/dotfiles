@@ -118,7 +118,7 @@ fi
 # Set shell.
 if test "${ME_OPERATING_SYSTEM}" != "OpenBSD"
 then
-	if test "$(basename "$(grep '^'"${USER}"':' /etc/passwd | awk -F ':' '{print $NF}')")" != "${_shell}"
+	if test "$(grep '^'"${USER}"':' /etc/passwd | awk -F ':' '{print $NF}')" != "${_shell}"
 	then
 		if test "$("${_shell}" -c ': && printf OK')" = "OK"
 		then

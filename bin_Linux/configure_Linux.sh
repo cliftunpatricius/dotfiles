@@ -46,12 +46,9 @@ readonly packages="clamav
 	firefox
 	chromium"
 
-# DNF doesn't handle multiple packages at once?!
 printf 'Installing packages ...\n'
-for i in ${packages}
-do
-	sudo dnf install -yq "${i}"
-done
+# shellcheck disable=SC2086
+sudo dnf install -yq ${packages}
 
 ### Proton Packages
 
@@ -113,7 +110,7 @@ gsettings get org.gnome.desktop.input-sources xkb-options |
 		"['caps:ctrl_modifier']"
 }
 
-test "prefer-dark" = "$(gsettings get org.gnome.desktop.interface color-scheme)" || {
+test "'prefer-dark'" = "$(gsettings get org.gnome.desktop.interface color-scheme)" || {
 	printf 'Enabling dark mode ...\n'
 	gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 }
@@ -123,12 +120,12 @@ test "true" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-lig
 	gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
 }
 
-test "18.00" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-schedule-from)" || {
+test "18.0" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-schedule-from)" || {
 	printf 'Sheduling Night Light begin ...\n'
 	gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 18.00
 }
 
-test "06.00" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-schedule-to)" || {
+test "6.0" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-schedule-to)" || {
 	printf 'Sheduling Night Light end ...\n'
 	gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 06.00
 }
