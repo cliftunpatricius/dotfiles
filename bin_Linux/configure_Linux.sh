@@ -7,7 +7,7 @@ set -e
 #
 # Oddities/pending issues:
 # - Had to disable preserving the working directory in new sessions of GNOME's terminal
-# - Launching tmux gets an error parsing a system file and does not load custom env vars
+# - Launching tmux gets following error: oksh: /etc/profile.d/lang.sh[62]: syntax error: `< ' unexpected
 #
 
 #
