@@ -118,10 +118,11 @@ fi
 # Set shell.
 if test "${ME_OPERATING_SYSTEM}" != "OpenBSD"
 then
-	if test "${SHELL}" != "${_shell}"
+	if test "$(basename "$(grep '^'"${USER}"':' /etc/passwd | awk -F ':' '{print $NF}')")" != "${_shell}"
 	then
 		if test "$("${_shell}" -c ': && printf OK')" = "OK"
 		then
+			printf 'Changing shell to %s ...\n' "${_shell}"
 			chsh -s "${_shell}"
 		else
 			print_notice_message "Invalid shell path given (${_shell}); Shell remains ${SHELL}"

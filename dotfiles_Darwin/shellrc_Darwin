@@ -1,13 +1,11 @@
 #!/bin/sh
 
 # shellcheck disable=SC2139
-alias vi="${EDITOR}"
-
-# shellcheck disable=SC2139
-alias view="${EDITOR}ew"
-
-# shellcheck disable=SC2139
-alias ex="${EDITOR%vi}ex"
+{
+	alias vi="${EDITOR}"
+	alias view="${EDITOR}ew"
+	alias ex="${EDITOR%vi}ex"
+}
 
 if test "${ME_CONTEXT}" = "work"
 then

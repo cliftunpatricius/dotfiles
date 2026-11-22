@@ -81,7 +81,10 @@ find "${HOME}" -type l -exec file {} \; |
 1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding
    executables (and their libraries): `./install.sh`
 1. Leaving the current shell running, open a new one and test things out
-1. Configure git via: `configure_git.sh` BEFORE committing work!!!
+1. Configure git _BEFORE_ committing work:
+   1. Put SSH keys in-place
+   1. Configure SSH to use keys for repo host
+   1. Run `configure_git.sh`
 
 ## Acknowledgements
 
