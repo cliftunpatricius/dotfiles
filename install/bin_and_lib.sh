@@ -2,9 +2,9 @@
 
 set -e
 
-# ---
-# Symlinks executables and libraries for ~/bin and ~/lib, respectively
-# ---
+#
+# Symlinks executables and libraries for "${HOME}"/bin and "${HOME}"/lib, respectively
+#
 
 #
 # Immediate Exit Conditions

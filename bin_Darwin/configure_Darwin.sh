@@ -51,7 +51,7 @@ then
 	sudo scutil --set HostName "${mac_computername}"
 fi
 
-if ! test -f ~/Library/LaunchAgents/com.ldaws.CapslockEscape.plist
+if ! test -f "${HOME}"/Library/LaunchAgents/com.ldaws.CapslockEscape.plist
 then
 	# https://developer.apple.com/library/archive/technotes/tn2450/_index.html#//apple_ref/doc/uid/DTS40017618-CH1-KEY_TABLE_USAGES
 	readonly caps_lock_code="0x700000039"
@@ -73,7 +73,7 @@ hidutil property --set "${caps_lock_remapping}" > /dev/null
 	cat > "${HOME}/Library/LaunchAgents/com.ldaws.CapslockRemapping.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Place in ~/Library/LaunchAgents/ -->
+<!-- Place in "${HOME}"/Library/LaunchAgents/ -->
 <!-- launchctl load com.ldaws.CapslockRemapping.plist -->
 <plist version="1.0">
   <dict>

@@ -17,16 +17,23 @@ set -e
 test "${ME_OPERATING_SYSTEM}" = "Linux" || exit 1
 
 #
+# Libraries
+#
+
+# shellcheck source=lib/_gnome.sh
+. "${HOME}"/lib/_gnome.sh
+
+#
 # Directories
 #
 
-test -d ~/code || {
-	mkdir -v ~/code
+test -d "${HOME}"/code || {
+	mkdir -v "${HOME}"/code
 }
 
-test -d ~/.ssh || {
-	mkdir -v ~/.ssh
-	chmod 700 ~/.ssh
+test -d "${HOME}"/.ssh || {
+	mkdir -v "${HOME}"/.ssh
+	chmod 700 "${HOME}"/.ssh
 }
 
 #
@@ -83,16 +90,16 @@ command -v proton-mail >/dev/null || {
 # Packages From Source
 #
 
-test -d ~/code/johnsonjh/OpenVi || {
-	test -d ~/code/johnsonjh || {
-		mkdir -v ~/code/johnsonjh
+test -d "${HOME}"/code/johnsonjh/OpenVi || {
+	test -d "${HOME}"/code/johnsonjh || {
+		mkdir -v "${HOME}"/code/johnsonjh
 	}
 
-	git clone https://github.com/johnsonjh/OpenVi.git ~/code/johnsonjh/OpenVi
+	git clone https://github.com/johnsonjh/OpenVi.git "${HOME}"/code/johnsonjh/OpenVi
 }
 
 (
-	cd ~/code/johnsonjh/OpenVi
+	cd "${HOME}"/code/johnsonjh/OpenVi
 	git pull
 	sudo dnf install -yq ncurses ncurses-devel
 	export CFLAGS="-std=c99 -Wall"
@@ -104,31 +111,11 @@ test -d ~/code/johnsonjh/OpenVi || {
 # GNOME
 #
 
-gsettings get org.gnome.desktop.input-sources xkb-options |
-	grep -Eq 'caps:ctrl_modifier' || {
-	gsettings set org.gnome.desktop.input-sources xkb-options \
-		"['caps:ctrl_modifier']"
-}
-
-test "'prefer-dark'" = "$(gsettings get org.gnome.desktop.interface color-scheme)" || {
-	printf 'Enabling dark mode ...\n'
-	gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-}
-
-test "true" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-enabled)" || {
-	printf 'Enabling Night Light ...\n'
-	gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
-}
-
-test "18.0" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-schedule-from)" || {
-	printf 'Sheduling Night Light begin ...\n'
-	gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-from 18.00
-}
-
-test "6.0" = "$(gsettings get org.gnome.settings-daemon.plugins.color night-light-schedule-to)" || {
-	printf 'Sheduling Night Light end ...\n'
-	gsettings set org.gnome.settings-daemon.plugins.color night-light-schedule-to 06.00
-}
+gnome_swap_caps_and_lctl
+gnome_set_dark_mode
+gnome_enable_night_light
+gnome_schedule_night_light_from 18.0
+gnome_schedule_night_light_to 6.0
 
 #
 # Shell

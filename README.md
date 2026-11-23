@@ -27,7 +27,7 @@ Cross-platform (Mostly. "It may be that. You never can tell with bees."):
 - `tmux` with custom status bar and `vi`-like bindings
 - `spleen` font
 - packages and configurations
-- cloning of other repositories, given a `~/code/.my_repos`
+- cloning of other repositories, given a `"${HOME}"/code/.my_repos`
 
 OpenBSD
 - CWM
