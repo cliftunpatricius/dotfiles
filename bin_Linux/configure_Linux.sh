@@ -40,6 +40,10 @@ test -d "${HOME}"/.ssh || {
 # Packages
 #
 
+### Remove Packages
+
+# Remove any default packages?
+
 ### Standard Packages
 
 readonly packages="clamav
@@ -76,6 +80,19 @@ command -v protonvpn-app >/dev/null || {
 	# To disable kill switch after unintalling
 	#nmcli connection show --active
 	#nmcli connection delete [connection name]
+}
+
+command -v proton-drive >/dev/null || {
+	printf 'Installing Proton Drive CLI ...\n'
+	curl -Ls https://proton.me/download/drive/cli/0.9.0/linux-x64/proton-drive |
+		sudo tee /usr/local/bin/proton-drive >/dev/null
+}
+sudo chown root:bin /usr/local/bin/proton-drive
+sudo chmod 755 /usr/local/bin/proton-drive
+
+proton-drive album list >/dev/null 2>/dev/null || {
+	printf 'Logging-in to Proton Drive ...\n'
+	proton-drive auth login
 }
 
 command -v proton-mail >/dev/null || {
