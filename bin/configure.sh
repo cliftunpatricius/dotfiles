@@ -176,15 +176,3 @@ then
 	gcloud components update
 	command -v gke-gcloud-auth-plugin >/dev/null 2>/dev/null || gcloud components install gke-gcloud-auth-plugin
 fi
-
-#
-# Other Users
-#
-# Each script in the directory will apply to the user who's name it bears
-# - E.g., `joe.sh` will grab "joe" from the filename and apply all changes
-#   to that user
-#
-# These scripts are _not_ committed to this repository
-#
-
-find "${HOME}"/bin/users/ -type f -name '*.sh' -exec {} \;
