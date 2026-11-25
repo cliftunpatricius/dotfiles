@@ -8,8 +8,10 @@ ME_ARCHITECTURE="$(uname -m)"
 ME_OPERATING_SYSTEM="$(uname -s)"
 ME_HOSTNAME="$(uname -n)"
 TERM="tmux-256color"
-LANG=en_US.UTF-8
-LC_CTYPE=en_US.UTF-8
+LANG="en_US.UTF-8"
+LC_CTYPE="en_US.UTF-8"
+CC="clang"
+CFLAGS="-std=c89 -Wall -Wextra"
 GOPATH="${HOME}/.go"
 export	ME_ARCHITECTURE \
 	ME_OPERATING_SYSTEM \
@@ -17,6 +19,8 @@ export	ME_ARCHITECTURE \
 	TERM \
 	LANG \
 	LC_CTYPE \
+	CC \
+	CFLAGS \
 	GOPATH
 
 PATH="${HOME}/bin:${HOME}/.opam/default/bin:${GOPATH}/bin:${PATH}"
@@ -44,7 +48,7 @@ then
 
 	if test -d "${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin"
 	then
-		GEM_VERSION="$("${HOMEBREW_PREFIX}"/opt/ruby@"${RUBY_VERSION}"/bin/gem --version 2> /dev/null)"
+		GEM_VERSION="$("${HOMEBREW_PREFIX}"/opt/ruby@"${RUBY_VERSION}"/bin/gem --version 2>/dev/null)"
 		PATH="${HOMEBREW_PREFIX}/opt/ruby@${RUBY_VERSION}/bin:${PATH}"
 		export GEM_VERSION PATH
 	fi
@@ -61,7 +65,10 @@ fi
 # Default Editor
 #
 
-if test "${ME_OPERATING_SYSTEM}" = "Darwin"
+if test "${ME_OPERATING_SYSTEM}" = "OpenBSD"
+then
+	EDITOR="$(command -v vi 2>/dev/null)"
+elif test "${ME_OPERATING_SYSTEM}" = "Darwin"
 then
 	if test "${ME_ARCHITECTURE}" = "arm64"
 	then
@@ -77,8 +84,9 @@ then
 	else
 		EDITOR="/usr/bin/vi"
 	fi
-else
-	EDITOR="$(command -v vi 2> /dev/null)"
+elif test "${ME_OPERATING_SYSTEM}" = "Linux"
+then
+	EDITOR="$(command -v ovi 2>/dev/null)"
 fi
 
 VISUAL="${EDITOR}"
@@ -117,7 +125,7 @@ export GPG_TTY
 # For installing cpdf. Would like to avoid, though.
 #
 
-if command -v opam > /dev/null 2> /dev/null
+if command -v opam >/dev/null 2>/dev/null
 then
 	# Do not allow to customize PATH. That is done above.
 	eval "$(opam env --switch=default | grep -Ev '^PATH=')"
@@ -127,7 +135,7 @@ fi
 # Calendar
 #
 
-if command -v calendar > /dev/null 2> /dev/null
+if command -v calendar >/dev/null 2>/dev/null
 then
 	calendar
 fi

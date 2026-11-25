@@ -27,7 +27,7 @@ Cross-platform (Mostly. "It may be that. You never can tell with bees."):
 - `tmux` with custom status bar and `vi`-like bindings
 - `spleen` font
 - packages and configurations
-- cloning of other repositories, given a `~/code/.my_repos`
+- cloning of other repositories, given a `"${HOME}"/code/.my_repos`
 
 OpenBSD
 - CWM
@@ -81,6 +81,10 @@ find "${HOME}" -type l -exec file {} \; |
 1. (__!!!DESTRUCTIVE!!!__) Symlink _both_ dotfiles _and_ corresponding
    executables (and their libraries): `./install.sh`
 1. Leaving the current shell running, open a new one and test things out
+1. Configure git _BEFORE_ committing work:
+   1. Put SSH keys in-place
+   1. Configure SSH to use keys for repo host
+   1. Run `configure_git.sh`
 
 ## Acknowledgements
 

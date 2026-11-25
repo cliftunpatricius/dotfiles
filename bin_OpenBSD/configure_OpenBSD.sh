@@ -250,7 +250,7 @@ then
 	if test -z "$(command -v cpdf 2> /dev/null)"
 	then
 		printf 'Initializing opam ...\n'
-		# Add an ~/.opamrc and possibly avoid init?
+		# Add an "${HOME}"/.opamrc and possibly avoid init?
 		opam init
 	fi
 

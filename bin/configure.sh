@@ -118,11 +118,12 @@ fi
 # Set shell.
 if test "${ME_OPERATING_SYSTEM}" != "OpenBSD"
 then
-	if test "${SHELL}" != "${_shell}"
+	if test "$(grep '^'"${USER}"':' /etc/passwd | awk -F ':' '{print $NF}')" != "${_shell}"
 	then
 		if test "$("${_shell}" -c ': && printf OK')" = "OK"
 		then
-			chpass -s "${_shell}"
+			printf 'Changing shell to %s ...\n' "${_shell}"
+			chsh -s "${_shell}"
 		else
 			print_notice_message "Invalid shell path given (${_shell}); Shell remains ${SHELL}"
 		fi
@@ -175,4 +176,3 @@ then
 	gcloud components update
 	command -v gke-gcloud-auth-plugin >/dev/null 2>/dev/null || gcloud components install gke-gcloud-auth-plugin
 fi
-

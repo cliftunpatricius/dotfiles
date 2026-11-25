@@ -18,5 +18,5 @@ playlists_order_by_title_video"
 
 for i in ${categories}
 do
-	yt-dlp --config-locations ~/.yt-dlp/"${i}" -a ~/cosmos/documents/yt_dlp_todo_"${i}"
+	yt-dlp --config-locations "${HOME}"/.yt-dlp/"${i}" -a "${HOME}"/cosmos/documents/yt_dlp_todo_"${i}"
 done

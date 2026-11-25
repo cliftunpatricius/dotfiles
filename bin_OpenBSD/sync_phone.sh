@@ -9,13 +9,15 @@ set -e
 # doas mkfs.exfat /dev/sd1i
 # doas exfatlabel /dev/sd1i PHONE_SD
 # doas mkfs.exfat
-# doas mount.exfat /dev/sd1i ~/phone_sd
+# doas mount.exfat /dev/sd1i "${HOME}"/phone_sd
 
 #
 # Main
 #
 
-printf 'Syncing ~/cosmos subdirectories to ~/phone_local ...\n'
+printf 'Syncing %s/cosmos subdirectories to %s/phone_local ...\n' \
+	"${HOME}" \
+	"${HOME}"
 rsync -rlpto --ignore-existing --del \
 	"${HOME}"/cosmos/audiobooks \
 	"${HOME}"/cosmos/books \
@@ -37,7 +39,7 @@ readonly phone_local_extensions
 
 # Track title should match filename pattern: <track_number> <track_title>
 # Remove embeded images (would like to do that to "master" files as well...)
-printf 'Modifying metadata in ~/phone_local ...\n'
+printf 'Modifying metadata in %s/phone_local ...\n' "${HOME}"
 find "${HOME}"/phone_local -type f \( \
 	-iname '*.flac' -o \
 	-iname '*.m4a' -o \
@@ -73,6 +75,6 @@ done
 
 if df "${HOME}"/phone_sd >/dev/null 2>/dev/null && test -n "${*}"
 then
-	printf 'Syncing ~/phone_local to ~/phone_sd ...\n'
+	printf 'Syncing %s/phone_local to %s/phone_sd ...\n' "${HOME}" "${HOME}"
 	rsync -rlpto --del "${HOME}"/phone_local/ "${HOME}"/phone_sd
 fi

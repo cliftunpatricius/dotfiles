@@ -1,2 +1,8 @@
 #!/bin/sh
 
+# shellcheck disable=SC2139
+{
+	alias vi="${EDITOR}"
+	alias view="${EDITOR}ew"
+	alias ex="${EDITOR%vi}ex"
+}
