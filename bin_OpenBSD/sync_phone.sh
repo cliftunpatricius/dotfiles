@@ -15,7 +15,9 @@ set -e
 # Main
 #
 
-printf 'Syncing "${HOME}"/cosmos subdirectories to "${HOME}"/phone_local ...\n'
+printf 'Syncing %s/cosmos subdirectories to %s/phone_local ...\n' \
+	"${HOME}" \
+	"${HOME}"
 rsync -rlpto --ignore-existing --del \
 	"${HOME}"/cosmos/audiobooks \
 	"${HOME}"/cosmos/books \
